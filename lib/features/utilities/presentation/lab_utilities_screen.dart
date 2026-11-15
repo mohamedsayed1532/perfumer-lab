@@ -1,7 +1,5 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
-import 'package:perfumery_lab/core/theme/app_typography.dart';
-import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 
 class LabUtilitiesScreen extends StatelessWidget {
   const LabUtilitiesScreen({super.key});
@@ -10,91 +8,116 @@ class LabUtilitiesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Lab Utilities', style: AppTypography.headline(context)),
-      ),
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _buildUtilityTile(
-              context,
-              title: 'Alcohol Gauging & Proof Calculator',
-              subtitle: 'Compute dilution from 96% to 80% with water contraction tables',
-              icon: CupertinoIcons.flame_fill,
-              color: CupertinoColors.systemIndigo,
+      child: CustomScrollView(
+        slivers: [
+          const CupertinoSliverNavigationBar(
+            largeTitle: Text('Lab Utilities'),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: CupertinoListSection.insetGrouped(
+                header: const Text(
+                  'REFERENCE CALCULATORS',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+                backgroundColor: CupertinoColors.transparent,
+                children: [
+                  CupertinoListTile.notched(
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemIndigo,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.flame_fill,
+                        color: CupertinoColors.white,
+                        size: 18,
+                      ),
+                    ),
+                    title: const Text(
+                      'Alcohol Gauging & Proof',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text('Dilute 96° to 80° with contraction tables'),
+                    trailing: const CupertinoListTileChevron(),
+                    onTap: () {
+                      _showToolAlert(context, 'Alcohol Gauging Calculator');
+                    },
+                  ),
+                  CupertinoListTile.notched(
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemTeal,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.drop_fill,
+                        color: CupertinoColors.white,
+                        size: 18,
+                      ),
+                    ),
+                    title: const Text(
+                      'Solvent Density & Mass',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text('Convert ml to grams via DPG, TEC, IPM density'),
+                    trailing: const CupertinoListTileChevron(),
+                    onTap: () {
+                      _showToolAlert(context, 'Solvent Mass Converter');
+                    },
+                  ),
+                  CupertinoListTile.notched(
+                    leading: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemGreen,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.shield_lefthalf_fill,
+                        color: CupertinoColors.white,
+                        size: 18,
+                      ),
+                    ),
+                    title: const Text(
+                      'IFRA 51st Amendment Limits',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text('Category 4 fine fragrance threshold rules'),
+                    trailing: const CupertinoListTileChevron(),
+                    onTap: () {
+                      _showToolAlert(context, 'IFRA Conformity Checker');
+                    },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            _buildUtilityTile(
-              context,
-              title: 'Solvent Density & Volume to Mass',
-              subtitle: 'Convert volume (ml) to grams using specific gravity of DPG, TEC, IPM',
-              icon: CupertinoIcons.drop_fill,
-              color: CupertinoColors.systemTeal,
-            ),
-            const SizedBox(height: 12),
-            _buildUtilityTile(
-              context,
-              title: 'IFRA 51st Amendment Limit Checker',
-              subtitle: 'Check Category 4 (Fine Fragrance) safe maximum usage thresholds',
-              icon: CupertinoIcons.shield_lefthalf_fill,
-              color: CupertinoColors.systemGreen,
-            ),
-          ],
-        ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
       ),
     );
   }
 
-  Widget _buildUtilityTile(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-  }) {
-    return LiquidGlass(
-      padding: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(16),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, size: 22, color: color),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.label.resolveFrom(context),
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.secondaryLabel.resolveFrom(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            CupertinoIcons.chevron_forward,
-            size: 16,
-            color: AppColors.tertiaryLabel.resolveFrom(context),
+  void _showToolAlert(BuildContext context, String toolName) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text(toolName),
+        content: const Padding(
+          padding: EdgeInsets.only(top: 8),
+          child: Text('Interactive reference calculator module ready.'),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('OK'),
+            onPressed: () => Navigator.pop(ctx),
           ),
         ],
       ),

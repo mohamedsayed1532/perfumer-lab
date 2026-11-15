@@ -1,4 +1,4 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
@@ -18,123 +18,146 @@ class ReadyOilsScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Ready Fragrance Oils',
-            style: AppTypography.headline(context)),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => _showCreateOilSheet(context, ref),
-          child: const Icon(CupertinoIcons.add_circled_solid, size: 28),
-        ),
-      ),
-      child: SafeArea(
-        child: readyOilsAsync.when(
-          data: (oils) {
-            if (oils.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      CupertinoIcons.drop,
-                      size: 48,
-                      color: AppColors.tertiaryLabel.resolveFrom(context),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'No Fragrance Oils Yet',
-                      style: AppTypography.headline(context),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Tap + to add your supplier fragrance oils.',
-                      style: AppTypography.subheadline(context),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              itemCount: oils.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final oil = oils[index];
-                return LiquidGlass(
-                  padding: const EdgeInsets.all(16),
-                  borderRadius: BorderRadius.circular(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              oil.name,
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.label.resolveFrom(context),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '${oil.stockGrams.toStringAsFixed(1)} g',
-                            style: AppTypography.precisionNumber(context,
-                                fontSize: 17),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Supplier: ${oil.supplier ?? "Generic"} • Lot: ${oil.lotNumber ?? "N/A"}',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.secondaryLabel.resolveFrom(context),
+      child: CustomScrollView(
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Ready Fragrance Oils'),
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => _showCreateOilSheet(context, ref),
+              child: const Icon(CupertinoIcons.add, size: 26),
+            ),
+          ),
+          readyOilsAsync.when(
+            data: (oils) {
+              if (oils.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.drop,
+                          size: 48,
+                          color: AppColors.tertiaryLabel.resolveFrom(context),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CupertinoButton(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 6),
-                            color: AppColors.accent.resolveFrom(context),
-                            borderRadius: BorderRadius.circular(10),
-                            onPressed: () {
-                              showCupertinoModalPopup(
-                                context: context,
-                                builder: (ctx) =>
-                                    FoDilutionCalculatorSheet(selectedOil: oil),
-                              );
-                            },
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(CupertinoIcons.flame_fill, size: 14),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Dilute & Bottle (EdP)',
-                                  style: TextStyle(
-                                      fontSize: 13, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        const SizedBox(height: 12),
+                        Text(
+                          'No Fragrance Oils Yet',
+                          style: AppTypography.headline(context),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Tap + to add your supplier fragrance oils.',
+                          style: AppTypography.subheadline(context),
+                        ),
+                      ],
+                    ),
                   ),
                 );
-              },
-            );
-          },
-          loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (err, _) => Center(child: Text('Error: $err')),
-        ),
+              }
+
+              return SliverPadding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final oil = oils[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: LiquidGlass(
+                          padding: const EdgeInsets.all(16),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      oil.name,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            AppColors.label.resolveFrom(context),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${oil.stockGrams.toStringAsFixed(1)} g',
+                                    style: AppTypography.precisionNumber(context,
+                                        fontSize: 17),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Supplier: ${oil.supplier ?? "Generic"} • Lot: ${oil.lotNumber ?? "N/A"}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.secondaryLabel
+                                      .resolveFrom(context),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  CupertinoButton(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 6),
+                                    color:
+                                        AppColors.accent.resolveFrom(context),
+                                    borderRadius: BorderRadius.circular(10),
+                                    onPressed: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (ctx) =>
+                                            FoDilutionCalculatorSheet(
+                                                selectedOil: oil),
+                                      );
+                                    },
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(CupertinoIcons.flame_fill,
+                                            size: 14),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Dilute & Bottle (EdP)',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: oils.length,
+                  ),
+                ),
+              );
+            },
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CupertinoActivityIndicator()),
+            ),
+            error: (err, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $err')),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
       ),
     );
   }

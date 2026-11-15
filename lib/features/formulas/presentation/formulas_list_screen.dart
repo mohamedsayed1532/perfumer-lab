@@ -1,4 +1,4 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:drift/drift.dart' as drift;
@@ -18,96 +18,114 @@ class FormulasListScreen extends ConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Formulas Lab', style: AppTypography.headline(context)),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => _showCreateFormulaDialog(context, ref),
-          child: const Icon(CupertinoIcons.add_circled_solid, size: 28),
-        ),
-      ),
-      child: SafeArea(
-        child: formulasAsync.when(
-          data: (formulas) {
-            if (formulas.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      CupertinoIcons.lab_flask,
-                      size: 48,
-                      color: AppColors.tertiaryLabel.resolveFrom(context),
-                    ),
-                    const SizedBox(height: 12),
-                    Text('No Formulas Created Yet',
-                        style: AppTypography.headline(context)),
-                    const SizedBox(height: 6),
-                    Text('Tap + to create your first fragrance formula.',
-                        style: AppTypography.subheadline(context)),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              itemCount: formulas.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final formula = formulas[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (_) =>
-                            FormulaDetailScreen(formulaId: formula.id),
-                      ),
-                    );
-                  },
-                  child: LiquidGlass(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: CustomScrollView(
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Formulas Lab'),
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => _showCreateFormulaDialog(context, ref),
+              child: const Icon(CupertinoIcons.add, size: 26),
+            ),
+          ),
+          formulasAsync.when(
+            data: (formulas) {
+              if (formulas.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              formula.name,
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.label.resolveFrom(context),
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              'v${formula.version} • Concentration: ${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.secondaryLabel
-                                    .resolveFrom(context),
-                              ),
-                            ),
-                          ],
-                        ),
                         Icon(
-                          CupertinoIcons.chevron_forward,
-                          size: 16,
+                          CupertinoIcons.lab_flask,
+                          size: 48,
                           color: AppColors.tertiaryLabel.resolveFrom(context),
                         ),
+                        const SizedBox(height: 12),
+                        Text('No Formulas Created Yet',
+                            style: AppTypography.headline(context)),
+                        const SizedBox(height: 6),
+                        Text('Tap + to create your first fragrance formula.',
+                            style: AppTypography.subheadline(context)),
                       ],
                     ),
                   ),
                 );
-              },
-            );
-          },
-          loading: () => const Center(child: CupertinoActivityIndicator()),
-          error: (err, _) => Center(child: Text('Error: $err')),
-        ),
+              }
+
+              return SliverPadding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final formula = formulas[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (_) =>
+                                    FormulaDetailScreen(formulaId: formula.id),
+                              ),
+                            );
+                          },
+                          child: LiquidGlass(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      formula.name,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.label.resolveFrom(context),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      'v${formula.version} • Concentration: ${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: AppColors.secondaryLabel
+                                            .resolveFrom(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  CupertinoIcons.chevron_forward,
+                                  size: 16,
+                                  color:
+                                      AppColors.tertiaryLabel.resolveFrom(context),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    childCount: formulas.length,
+                  ),
+                ),
+              );
+            },
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CupertinoActivityIndicator()),
+            ),
+            error: (err, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $err')),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
       ),
     );
   }

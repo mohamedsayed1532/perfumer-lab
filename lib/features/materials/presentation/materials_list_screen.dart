@@ -1,4 +1,4 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
@@ -11,12 +11,13 @@ class MaterialsListScreen extends ConsumerStatefulWidget {
   const MaterialsListScreen({super.key});
 
   @override
-  ConsumerState<MaterialsListScreen> createState() => _MaterialsListScreenState();
+  ConsumerState<MaterialsListScreen> createState() =>
+      _MaterialsListScreenState();
 }
 
 class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   String _searchQuery = '';
-  String _selectedFilter = 'all'; // 'all', 'top', 'heart', 'base'
+  String _selectedFilter = 'all';
 
   @override
   Widget build(BuildContext context) {
@@ -24,118 +25,144 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Raw Materials', style: AppTypography.headline(context)),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            showCupertinoModalPopup(
-              context: context,
-              builder: (ctx) => const CreateMaterialSheet(),
-            );
-          },
-          child: const Icon(CupertinoIcons.add_circled_solid, size: 28),
-        ),
-      ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: CustomScrollView(
+        slivers: [
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Raw Materials'),
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (ctx) => const CreateMaterialSheet(),
+                );
+              },
+              child: const Icon(CupertinoIcons.add, size: 26),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: CupertinoSearchTextField(
-                placeholder: 'Search by material name, CAS, botanical...',
-                onChanged: (val) => setState(() => _searchQuery = val.toLowerCase()),
+                placeholder: 'Search by material, CAS, botanical...',
+                onChanged: (val) =>
+                    setState(() => _searchQuery = val.toLowerCase()),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               child: SizedBox(
                 width: double.infinity,
-                child: CupertinoSegmentedControl<String>(
+                child: CupertinoSlidingSegmentedControl<String>(
                   groupValue: _selectedFilter,
-                  selectedColor: AppColors.accent.resolveFrom(context),
-                  unselectedColor: CupertinoColors.transparent,
-                  borderColor: AppColors.separator.resolveFrom(context),
-                  children: const {
-                    'all': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                      child: Text('All'),
-                    ),
-                    'top': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                      child: Text('Top'),
-                    ),
-                    'heart': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                      child: Text('Heart'),
-                    ),
-                    'base': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                      child: Text('Base'),
-                    ),
+                  thumbColor: AppColors.accent.resolveFrom(context),
+                  backgroundColor: AppColors.secondarySystemGroupedBackground
+                      .resolveFrom(context),
+                  children: {
+                    'all': _buildSegmentLabel('All', _selectedFilter == 'all'),
+                    'top': _buildSegmentLabel('Top', _selectedFilter == 'top'),
+                    'heart':
+                        _buildSegmentLabel('Heart', _selectedFilter == 'heart'),
+                    'base':
+                        _buildSegmentLabel('Base', _selectedFilter == 'base'),
                   },
-                  onValueChanged: (val) => setState(() => _selectedFilter = val),
+                  onValueChanged: (val) {
+                    if (val != null) setState(() => _selectedFilter = val);
+                  },
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: materialsAsync.when(
-                data: (materials) {
-                  final filtered = materials.where((m) {
-                    final matchesQuery = _searchQuery.isEmpty ||
-                        m.name.toLowerCase().contains(_searchQuery) ||
-                        (m.casNumber?.toLowerCase().contains(_searchQuery) ?? false) ||
-                        (m.botanicalName?.toLowerCase().contains(_searchQuery) ?? false);
-                    final matchesFilter = _selectedFilter == 'all' ||
-                        m.pyramidNote.toLowerCase() == _selectedFilter;
-                    return matchesQuery && matchesFilter;
-                  }).toList();
+          ),
+          materialsAsync.when(
+            data: (materials) {
+              final filtered = materials.where((m) {
+                final matchesQuery = _searchQuery.isEmpty ||
+                    m.name.toLowerCase().contains(_searchQuery) ||
+                    (m.casNumber?.toLowerCase().contains(_searchQuery) ?? false) ||
+                    (m.botanicalName?.toLowerCase().contains(_searchQuery) ??
+                        false);
+                final matchesFilter = _selectedFilter == 'all' ||
+                    m.pyramidNote.toLowerCase() == _selectedFilter;
+                return matchesQuery && matchesFilter;
+              }).toList();
 
-                  if (filtered.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            CupertinoIcons.square_stack_3d_up_slash,
-                            size: 48,
-                            color: AppColors.tertiaryLabel.resolveFrom(context),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            materials.isEmpty
-                                ? 'No Raw Materials Yet'
-                                : 'No Matching Materials',
-                            style: AppTypography.headline(context),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            materials.isEmpty
-                                ? 'Tap + to catalog your first aroma chemical or natural.'
-                                : 'Try adjusting your search terms or filter.',
-                            style: AppTypography.subheadline(context),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+              if (filtered.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.square_stack_3d_up_slash,
+                          size: 48,
+                          color: AppColors.tertiaryLabel.resolveFrom(context),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          materials.isEmpty
+                              ? 'No Raw Materials Yet'
+                              : 'No Matching Materials',
+                          style: AppTypography.headline(context),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          materials.isEmpty
+                              ? 'Tap + to catalog your first aroma chemical.'
+                              : 'Try adjusting your search or filter.',
+                          style: AppTypography.subheadline(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
+              return SliverPadding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
                       final item = filtered[index];
-                      return _buildMaterialCard(context, item);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _buildMaterialCard(context, item),
+                      );
                     },
-                  );
-                },
-                loading: () => const Center(child: CupertinoActivityIndicator()),
-                error: (err, _) => Center(child: Text('Error loading: $err')),
-              ),
+                    childCount: filtered.length,
+                  ),
+                ),
+              );
+            },
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CupertinoActivityIndicator()),
             ),
-          ],
+            error: (err, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $err')),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegmentLabel(String text, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          color: isSelected
+              ? CupertinoColors.white
+              : AppColors.label.resolveFrom(context),
         ),
       ),
     );

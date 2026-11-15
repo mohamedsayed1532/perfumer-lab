@@ -1,4 +1,4 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
@@ -16,7 +16,7 @@ class AgingDashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
-  String _selectedStage = 'all'; // 'all', 'maturation', 'maceration'
+  String _selectedStage = 'all';
 
   @override
   Widget build(BuildContext context) {
@@ -24,87 +24,109 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
 
     return CupertinoPageScaffold(
       backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Aging & Batches', style: AppTypography.headline(context)),
-      ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: CustomScrollView(
+        slivers: [
+          const CupertinoSliverNavigationBar(
+            largeTitle: Text('Aging & Batches'),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: SizedBox(
                 width: double.infinity,
-                child: CupertinoSegmentedControl<String>(
+                child: CupertinoSlidingSegmentedControl<String>(
                   groupValue: _selectedStage,
-                  selectedColor: AppColors.accent.resolveFrom(context),
-                  unselectedColor: CupertinoColors.transparent,
-                  borderColor: AppColors.separator.resolveFrom(context),
-                  children: const {
-                    'all': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      child: Text('All Batches'),
-                    ),
-                    'maturation': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      child: Text('Maturation (Oils)'),
-                    ),
-                    'maceration': Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
-                      child: Text('Maceration (Perfumes)'),
-                    ),
+                  thumbColor: AppColors.accent.resolveFrom(context),
+                  backgroundColor: AppColors.secondarySystemGroupedBackground
+                      .resolveFrom(context),
+                  children: {
+                    'all': _buildSegmentLabel('All Batches', _selectedStage == 'all'),
+                    'maturation': _buildSegmentLabel(
+                        'Maturation (Oils)', _selectedStage == 'maturation'),
+                    'maceration': _buildSegmentLabel(
+                        'Maceration (Perfumes)', _selectedStage == 'maceration'),
                   },
-                  onValueChanged: (val) => setState(() => _selectedStage = val),
+                  onValueChanged: (val) {
+                    if (val != null) setState(() => _selectedStage = val);
+                  },
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: batchesAsync.when(
-                data: (batches) {
-                  final filtered = batches.where((b) {
-                    if (_selectedStage == 'all') return true;
-                    return b.stage.toLowerCase() == _selectedStage;
-                  }).toList();
+          ),
+          batchesAsync.when(
+            data: (batches) {
+              final filtered = batches.where((b) {
+                if (_selectedStage == 'all') return true;
+                return b.stage.toLowerCase() == _selectedStage;
+              }).toList();
 
-                  if (filtered.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            CupertinoIcons.hourglass,
-                            size: 48,
-                            color: AppColors.tertiaryLabel.resolveFrom(context),
-                          ),
-                          const SizedBox(height: 12),
-                          Text('No Active Aging Batches',
-                              style: AppTypography.headline(context)),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Compound a formula or dilute an FO to start tracking aging.',
-                            style: AppTypography.subheadline(context),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+              if (filtered.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          CupertinoIcons.hourglass,
+                          size: 48,
+                          color: AppColors.tertiaryLabel.resolveFrom(context),
+                        ),
+                        const SizedBox(height: 12),
+                        Text('No Active Aging Batches',
+                            style: AppTypography.headline(context)),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Compound a formula or dilute an FO to start tracking aging.',
+                          style: AppTypography.subheadline(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 14),
-                    itemBuilder: (context, index) {
+              return SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
                       final batch = filtered[index];
-                      return _buildBatchCard(context, batch);
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: _buildBatchCard(context, batch),
+                      );
                     },
-                  );
-                },
-                loading: () =>
-                    const Center(child: CupertinoActivityIndicator()),
-                error: (err, _) => Center(child: Text('Error: $err')),
-              ),
+                    childCount: filtered.length,
+                  ),
+                ),
+              );
+            },
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CupertinoActivityIndicator()),
             ),
-          ],
+            error: (err, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $err')),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegmentLabel(String text, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          color: isSelected
+              ? CupertinoColors.white
+              : AppColors.label.resolveFrom(context),
         ),
       ),
     );
@@ -113,9 +135,8 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
   Widget _buildBatchCard(BuildContext context, AgingBatche batch) {
     final daysElapsed = DateTime.now().difference(batch.startDate).inDays;
     final targetDays = batch.targetAgingDays;
-    final progress = (targetDays > 0)
-        ? (daysElapsed / targetDays).clamp(0.0, 1.0)
-        : 1.0;
+    final progress =
+        (targetDays > 0) ? (daysElapsed / targetDays).clamp(0.0, 1.0) : 1.0;
     final isMaturation = batch.stage == 'maturation';
 
     return LiquidGlass(
@@ -220,7 +241,8 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               CupertinoButton(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                 color: AppColors.secondarySystemGroupedBackground
                     .resolveFrom(context),
                 borderRadius: BorderRadius.circular(10),
