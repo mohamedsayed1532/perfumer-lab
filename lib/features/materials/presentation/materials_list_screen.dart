@@ -169,21 +169,26 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   }
 
   Widget _buildMaterialCard(BuildContext context, Material item) {
+    // Pyramid note identity — icon + color per note classification
     IconData noteIcon;
     Color noteColor;
+    String noteLabel;
     switch (item.pyramidNote.toLowerCase()) {
       case 'top':
         noteIcon = CupertinoIcons.triangle;
         noteColor = CupertinoColors.systemYellow;
+        noteLabel = 'T';
         break;
       case 'heart':
-        noteIcon = CupertinoIcons.triangle_lefthalf_fill;
+        noteIcon = CupertinoIcons.heart_fill;
         noteColor = CupertinoColors.systemPink;
+        noteLabel = 'H';
         break;
       case 'base':
       default:
         noteIcon = CupertinoIcons.triangle_fill;
         noteColor = CupertinoColors.systemPurple;
+        noteLabel = 'B';
         break;
     }
 
@@ -203,10 +208,26 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: noteColor.withValues(alpha: 0.18),
+                color: noteColor.withValues(alpha: 0.22),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(noteIcon, size: 20, color: noteColor),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(noteIcon, size: 18, color: noteColor),
+                    Text(
+                      noteLabel,
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: noteColor,
+                        height: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(

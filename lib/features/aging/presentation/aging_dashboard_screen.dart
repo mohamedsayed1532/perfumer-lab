@@ -41,11 +41,11 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
                   backgroundColor: AppColors.secondarySystemGroupedBackground
                       .resolveFrom(context),
                   children: {
-                    'all': _buildSegmentLabel('All Batches', _selectedStage == 'all'),
+                    'all': _buildSegmentLabel('All', _selectedStage == 'all'),
                     'maturation': _buildSegmentLabel(
-                        'Maturation (Oils)', _selectedStage == 'maturation'),
+                        'Maturation', _selectedStage == 'maturation'),
                     'maceration': _buildSegmentLabel(
-                        'Maceration (Perfumes)', _selectedStage == 'maceration'),
+                        'Maceration', _selectedStage == 'maceration'),
                   },
                   onValueChanged: (val) {
                     if (val != null) setState(() => _selectedStage = val);
