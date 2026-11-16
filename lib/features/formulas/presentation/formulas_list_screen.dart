@@ -2,7 +2,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
-import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/formulas_repository.dart';
 import 'formula_detail_screen.dart';
 import 'create_formula_sheet.dart';
@@ -93,8 +92,19 @@ class FormulasListScreen extends ConsumerWidget {
                               ),
                             );
                           },
-                          child: LiquidGlass(
+                          child: Container(
                             padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondarySystemGroupedBackground
+                                  .resolveFrom(context),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.separator
+                                    .resolveFrom(context)
+                                    .withValues(alpha: 0.2),
+                                width: 0.5,
+                              ),
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
