@@ -223,15 +223,18 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Container(
-              height: 6,
+              height: 8,
               color: AppColors.separator.resolveFrom(context),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
                 widthFactor: progress,
                 child: Container(
-                  color: progress >= 1.0
-                      ? CupertinoColors.systemGreen
-                      : AppColors.accent.resolveFrom(context),
+                  decoration: BoxDecoration(
+                    color: progress >= 1.0
+                        ? CupertinoColors.systemGreen
+                        : AppColors.accent.resolveFrom(context),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
             ),

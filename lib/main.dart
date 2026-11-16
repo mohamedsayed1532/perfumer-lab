@@ -20,6 +20,9 @@ class PerfumeryLabApp extends StatelessWidget {
     return const CupertinoApp(
       title: 'Perfumery Lab',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        DefaultCupertinoLocalizations.delegate,
+      ],
       theme: CupertinoThemeData(
         brightness: Brightness.dark, // Default dark lab appearance
         primaryColor: AppColors.accent,

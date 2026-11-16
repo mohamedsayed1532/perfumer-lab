@@ -245,6 +245,8 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                   const SizedBox(height: 3),
                   Text(
                     '${item.pyramidNote.toUpperCase()} • ${item.dilutionPercent.toStringAsFixed(0)}% in ${item.defaultSolvent ?? "Neat"}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColors.secondaryLabel.resolveFrom(context),

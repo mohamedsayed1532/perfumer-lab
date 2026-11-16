@@ -110,7 +110,7 @@ class ReadyOilsScreen extends ConsumerWidget {
                                 children: [
                                   CupertinoButton(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 6),
+                                        horizontal: 14, vertical: 8),
                                     color:
                                         AppColors.accent.resolveFrom(context),
                                     borderRadius: BorderRadius.circular(10),
@@ -125,14 +125,19 @@ class ReadyOilsScreen extends ConsumerWidget {
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(CupertinoIcons.flame_fill,
-                                            size: 14),
+                                        Icon(
+                                          CupertinoIcons.flame_fill,
+                                          size: 14,
+                                          color: CupertinoColors.white,
+                                        ),
                                         SizedBox(width: 6),
                                         Text(
                                           'Dilute & Bottle (EdP)',
                                           style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: CupertinoColors.white,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -170,8 +175,11 @@ class ReadyOilsScreen extends ConsumerWidget {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoPageScaffold(
+        backgroundColor:
+            AppColors.systemGroupedBackground.resolveFrom(context),
         navigationBar: CupertinoNavigationBar(
-          middle: const Text('Add Fragrance Oil'),
+          middle: Text('Add Fragrance Oil',
+              style: AppTypography.headline(context)),
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: () => Navigator.pop(ctx),
@@ -193,35 +201,124 @@ class ReadyOilsScreen extends ConsumerWidget {
               );
               Navigator.pop(ctx);
             },
-            child: const Text('Save'),
+            child: const Text('Save',
+                style: TextStyle(fontWeight: FontWeight.w600)),
           ),
         ),
         child: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
-              CupertinoTextField(
-                controller: nameController,
-                placeholder: 'Oil Name (e.g. Aventus Type, Amber Vanilla FO)',
-                padding: const EdgeInsets.all(12),
+              Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 8),
+                child: Text(
+                  'OIL DETAILS',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
+                    color: AppColors.secondaryLabel.resolveFrom(context),
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.secondarySystemGroupedBackground
+                      .resolveFrom(context),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  children: [
+                    _buildModalRow(
+                      context,
+                      'Oil Name *',
+                      nameController,
+                      placeholder: 'e.g. Aventus Type, Amber Vanilla FO',
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 16),
+                      height: 0.5,
+                      color: AppColors.separator.resolveFrom(context),
+                    ),
+                    _buildModalRow(
+                      context,
+                      'Supplier',
+                      supplierController,
+                      placeholder: 'e.g. Luzi, Expressions Parfumées',
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 16),
+                      height: 0.5,
+                      color: AppColors.separator.resolveFrom(context),
+                    ),
+                    _buildModalRow(
+                      context,
+                      'Stock (g)',
+                      stockController,
+                      placeholder: '100.0',
+                      keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
-              CupertinoTextField(
-                controller: supplierController,
-                placeholder: 'Supplier (e.g. Luzi, Expressions Parfumées)',
-                padding: const EdgeInsets.all(12),
-              ),
-              const SizedBox(height: 12),
-              CupertinoTextField(
-                controller: stockController,
-                placeholder: 'Stock Weight in Grams',
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                padding: const EdgeInsets.all(12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  'Ready fragrance oils are pre-compounded concentrate blends ready for direct dilution with perfumer alcohol.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.secondaryLabel.resolveFrom(context),
+                  ),
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildModalRow(
+    BuildContext context,
+    String label,
+    TextEditingController controller, {
+    String? placeholder,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: AppColors.label.resolveFrom(context),
+              ),
+            ),
+          ),
+          Expanded(
+            child: CupertinoTextField(
+              controller: controller,
+              placeholder: placeholder,
+              placeholderStyle: TextStyle(
+                color: AppColors.tertiaryLabel.resolveFrom(context),
+                fontSize: 15,
+              ),
+              style: TextStyle(
+                color: AppColors.label.resolveFrom(context),
+                fontSize: 15,
+              ),
+              decoration: null,
+              keyboardType: keyboardType,
+            ),
+          ),
+        ],
       ),
     );
   }

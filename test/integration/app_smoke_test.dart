@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:perfumery_lab/main.dart';
@@ -29,6 +29,17 @@ void main() {
 
     // Initial tab is Formulas (CupertinoSliverNavigationBar creates a large title and a collapsed title)
     expect(find.text('Formulas Lab'), findsWidgets);
+
+    // Tap + button on Formulas Lab (opens CreateFormulaSheet)
+    await tester.tap(find.byIcon(CupertinoIcons.add).first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('New Formula'), findsOneWidget);
+
+    // Dismiss sheet
+    await tester.tap(find.text('Cancel'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // Tap Materials tab
     await tester.tap(find.text('Materials'));

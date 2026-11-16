@@ -1,13 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
-import 'package:drift/drift.dart' as drift;
-import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
 import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/formulas_repository.dart';
 import 'formula_detail_screen.dart';
+import 'create_formula_sheet.dart';
 
 class FormulasListScreen extends ConsumerWidget {
   const FormulasListScreen({super.key});
@@ -24,7 +22,7 @@ class FormulasListScreen extends ConsumerWidget {
             largeTitle: const Text('Formulas Lab'),
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
-              onPressed: () => _showCreateFormulaDialog(context, ref),
+              onPressed: () => _openCreateFormula(context),
               child: const Icon(CupertinoIcons.add, size: 26),
             ),
           ),
@@ -48,6 +46,28 @@ class FormulasListScreen extends ConsumerWidget {
                         const SizedBox(height: 6),
                         Text('Tap + to create your first fragrance formula.',
                             style: AppTypography.subheadline(context)),
+                        const SizedBox(height: 16),
+                        CupertinoButton.filled(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          borderRadius: BorderRadius.circular(12),
+                          onPressed: () => _openCreateFormula(context),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(CupertinoIcons.add,
+                                  size: 18, color: CupertinoColors.white),
+                              SizedBox(width: 6),
+                              Text(
+                                'Create Formula',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: CupertinoColors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -130,53 +150,10 @@ class FormulasListScreen extends ConsumerWidget {
     );
   }
 
-  void _showCreateFormulaDialog(BuildContext context, WidgetRef ref) {
-    final nameController = TextEditingController();
-    final versionController = TextEditingController(text: '1.0');
-
-    showCupertinoDialog(
+  void _openCreateFormula(BuildContext context) {
+    showCupertinoModalPopup(
       context: context,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('New Formula'),
-        content: Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Column(
-            children: [
-              CupertinoTextField(
-                controller: nameController,
-                placeholder: 'Formula Name (e.g. Santal Minimal, Citrus Amber)',
-              ),
-              const SizedBox(height: 8),
-              CupertinoTextField(
-                controller: versionController,
-                placeholder: 'Version (e.g. 1.0, Mod 3)',
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: const Text('Create'),
-            onPressed: () async {
-              if (nameController.text.trim().isEmpty) return;
-              final repo = ref.read(formulasRepositoryProvider);
-              await repo.createFormula(
-                FormulasCompanion.insert(
-                  id: const Uuid().v4(),
-                  name: nameController.text.trim(),
-                  version: drift.Value(versionController.text.trim()),
-                ),
-              );
-              Navigator.pop(ctx);
-            },
-          ),
-        ],
-      ),
+      builder: (ctx) => const CreateFormulaSheet(),
     );
   }
 }
