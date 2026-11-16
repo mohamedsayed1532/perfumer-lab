@@ -40,4 +40,17 @@ class AgingRepository {
   Future<void> logEvaluation(AgingEvaluationsCompanion eval) {
     return _db.into(_db.agingEvaluations).insert(eval);
   }
+
+  Future<void> updateAgingBatch(AgingBatchesCompanion batch) {
+    return _db.into(_db.agingBatches).insertOnConflictUpdate(batch);
+  }
+
+  Future<int> deleteAgingBatch(String id) {
+    return (_db.delete(_db.agingBatches)..where((t) => t.id.equals(id))).go();
+  }
+
+  Future<void> completeAgingBatch(String id) {
+    return (_db.update(_db.agingBatches)..where((t) => t.id.equals(id)))
+        .write(const AgingBatchesCompanion(status: Value('completed')));
+  }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 
 class LabUtilitiesScreen extends StatelessWidget {

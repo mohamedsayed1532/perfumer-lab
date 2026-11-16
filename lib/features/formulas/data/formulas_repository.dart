@@ -68,6 +68,14 @@ class FormulasRepository {
     return _db.into(_db.formulas).insertOnConflictUpdate(formula);
   }
 
+  Future<void> updateFormula(FormulasCompanion formula) {
+    return _db.update(_db.formulas).replace(formula);
+  }
+
+  Future<int> deleteFormula(String formulaId) {
+    return (_db.delete(_db.formulas)..where((t) => t.id.equals(formulaId))).go();
+  }
+
   Future<void> addOrUpdateItem(FormulaItemsCompanion item) {
     return _db.into(_db.formulaItems).insertOnConflictUpdate(item);
   }

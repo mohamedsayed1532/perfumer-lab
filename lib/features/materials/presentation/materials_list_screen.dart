@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
@@ -6,6 +6,7 @@ import 'package:perfumery_lab/core/theme/app_typography.dart';
 import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/materials_repository.dart';
 import 'create_material_sheet.dart';
+import 'material_detail_sheet.dart';
 
 class MaterialsListScreen extends ConsumerStatefulWidget {
   const MaterialsListScreen({super.key});
@@ -196,7 +197,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
       onTap: () {
         showCupertinoModalPopup(
           context: context,
-          builder: (ctx) => CreateMaterialSheet(existing: item),
+          builder: (ctx) => MaterialDetailSheet(material: item),
         );
       },
       child: LiquidGlass(
