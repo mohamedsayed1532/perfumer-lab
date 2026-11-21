@@ -154,9 +154,9 @@ class _CreateOrEditReadyOilSheetState
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _save,
-          child: const Text(
-            'Save',
-            style: TextStyle(fontWeight: FontWeight.w600),
+          child: Text(
+            isEditing ? 'Done' : 'Save',
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
       ),

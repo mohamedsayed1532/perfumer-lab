@@ -144,7 +144,7 @@ class _EditAgingBatchSheetState extends ConsumerState<EditAgingBatchSheet> {
           padding: EdgeInsets.zero,
           onPressed: _save,
           child: const Text(
-            'Save',
+            'Done',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
@@ -236,24 +236,13 @@ class _EditAgingBatchSheetState extends ConsumerState<EditAgingBatchSheet> {
             const SizedBox(height: 12),
             CupertinoButton(
               padding: const EdgeInsets.symmetric(vertical: 14),
-              color: CupertinoColors.systemRed.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
               onPressed: _confirmDelete,
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(CupertinoIcons.trash,
-                      size: 18, color: CupertinoColors.systemRed),
-                  SizedBox(width: 8),
-                  Text(
-                    'Delete Aging Batch',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: CupertinoColors.systemRed,
-                    ),
-                  ),
-                ],
+              child: const Text(
+                'Delete Aging Batch',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: CupertinoColors.systemRed,
+                ),
               ),
             ),
             const SizedBox(height: 40),

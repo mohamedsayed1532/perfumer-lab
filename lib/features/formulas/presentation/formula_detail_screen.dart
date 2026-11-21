@@ -78,26 +78,18 @@ class FormulaDetailScreen extends ConsumerWidget {
                 children: [
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () => _showDuplicateModDialog(context, ref, formula),
+                    onPressed: () =>
+                        _showMoreActionsSheet(context, ref, formula),
                     child: const Icon(
-                      CupertinoIcons.doc_on_doc,
-                      size: 20,
+                      CupertinoIcons.ellipsis_circle,
+                      size: 22,
                     ),
                   ),
                   const SizedBox(width: 8),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () => _confirmDeleteFormula(context, ref, formula),
-                    child: const Icon(
-                      CupertinoIcons.trash,
-                      size: 20,
-                      color: CupertinoColors.systemRed,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  CupertinoButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () => _showAddIngredientSheet(context, formula.id),
+                    onPressed: () =>
+                        _showAddIngredientSheet(context, formula.id),
                     child: const Icon(CupertinoIcons.add, size: 24),
                   ),
                 ],
@@ -169,41 +161,44 @@ class FormulaDetailScreen extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              CupertinoButton.filled(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                borderRadius: BorderRadius.circular(12),
-                                onPressed: items.isEmpty
-                                    ? null
-                                    : () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (_) =>
-                                                BenchCompoundingScreen(
-                                              formulaWithMaterials: data,
+                              Opacity(
+                                opacity: items.isEmpty ? 0.4 : 1.0,
+                                child: CupertinoButton.filled(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  borderRadius: BorderRadius.circular(12),
+                                  onPressed: items.isEmpty
+                                      ? null
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (_) =>
+                                                  BenchCompoundingScreen(
+                                                formulaWithMaterials: data,
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      CupertinoIcons.circle_grid_hex_fill,
-                                      size: 16,
-                                      color: CupertinoColors.white,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Compound',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
+                                          );
+                                        },
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.circle_grid_hex_fill,
+                                        size: 16,
                                         color: CupertinoColors.white,
                                       ),
-                                    ),
-                                  ],
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Compound',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: CupertinoColors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -450,6 +445,39 @@ class FormulaDetailScreen extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+
+  void _showMoreActionsSheet(
+    BuildContext context,
+    WidgetRef ref,
+    Formula formula,
+  ) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _showDuplicateModDialog(context, ref, formula);
+            },
+            child: const Text('Duplicate as Mod'),
+          ),
+          CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(ctx);
+              _confirmDeleteFormula(context, ref, formula);
+            },
+            child: const Text('Delete Formula'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Cancel'),
+        ),
+      ),
     );
   }
 
