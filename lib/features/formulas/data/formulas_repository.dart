@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/features/materials/data/materials_repository.dart';
 
@@ -26,6 +27,36 @@ class FormulaItemWithMaterial {
   final FormulaItem item;
   final Material material;
   FormulaItemWithMaterial({required this.item, required this.material});
+}
+
+class CompoundedBatchItemResult {
+  final String materialId;
+  final String materialName;
+  final double weighedGrams;
+  final double previousStockGrams;
+  final double remainingStockGrams;
+
+  CompoundedBatchItemResult({
+    required this.materialId,
+    required this.materialName,
+    required this.weighedGrams,
+    required this.previousStockGrams,
+    required this.remainingStockGrams,
+  });
+}
+
+class CompoundingExecutionResult {
+  final String batchId;
+  final String batchNumber;
+  final double totalWeighedGrams;
+  final List<CompoundedBatchItemResult> itemResults;
+
+  CompoundingExecutionResult({
+    required this.batchId,
+    required this.batchNumber,
+    required this.totalWeighedGrams,
+    required this.itemResults,
+  });
 }
 
 class FormulasRepository {
@@ -83,4 +114,137 @@ class FormulasRepository {
   Future<int> deleteItem(String itemId) {
     return (_db.delete(_db.formulaItems)..where((t) => t.id.equals(itemId))).go();
   }
+
+  /// Duplicates a formula as an iterative variation ("Mod"), copying all line items.
+  Future<String> duplicateFormulaAsMod({
+    required String sourceFormulaId,
+    required String newName,
+    String? newVersion,
+  }) async {
+    final newFormulaId = const Uuid().v4();
+    final sourceFormula = await (_db.select(_db.formulas)
+          ..where((t) => t.id.equals(sourceFormulaId)))
+        .getSingle();
+
+    final sourceItems = await (_db.select(_db.formulaItems)
+          ..where((t) => t.formulaId.equals(sourceFormulaId)))
+        .get();
+
+    await _db.transaction(() async {
+      await _db.into(_db.formulas).insert(
+            FormulasCompanion.insert(
+              id: newFormulaId,
+              name: newName,
+              version: Value(newVersion ?? 'Mod 2'),
+              description: Value(sourceFormula.description),
+              targetConcentrationPercent:
+                  Value(sourceFormula.targetConcentrationPercent),
+            ),
+          );
+
+      for (final item in sourceItems) {
+        await _db.into(_db.formulaItems).insert(
+              FormulaItemsCompanion.insert(
+                id: const Uuid().v4(),
+                formulaId: newFormulaId,
+                materialId: item.materialId,
+                partsPerThousand: item.partsPerThousand,
+                specifiedDilutionPercent:
+                    Value(item.specifiedDilutionPercent),
+                notes: Value(item.notes),
+              ),
+            );
+      }
+    });
+
+    return newFormulaId;
+  }
+
+  /// Atomically finishes compounding: records an aging batch, updates bottle stock in-place,
+  /// and writes an immutable audit log entry in [InventoryLogs].
+  Future<CompoundingExecutionResult> compoundBatchAndDeductStock({
+    required String formulaId,
+    required String formulaName,
+    required String batchNumber,
+    required double targetBatchGrams,
+    required Map<String, double> weighedGramsByMaterialId,
+    int targetAgingDays = 14,
+  }) async {
+    final batchId = const Uuid().v4();
+    final itemResults = <CompoundedBatchItemResult>[];
+    double totalWeighed = 0.0;
+
+    await _db.transaction(() async {
+      // 1. Create Aging Batches record
+      await _db.into(_db.agingBatches).insert(
+            AgingBatchesCompanion.insert(
+              id: batchId,
+              batchNumber: batchNumber,
+              name: '$formulaName Concentrate',
+              sourceType: 'formula',
+              sourceId: formulaId,
+              stage: 'maturation',
+              totalWeightGrams: targetBatchGrams,
+              concentrationPercent: 100.0, // Concentrate
+              startDate: DateTime.now(),
+              targetAgingDays: Value(targetAgingDays),
+            ),
+          );
+
+      // 2. Process stock deduction for each weighed material
+      for (final entry in weighedGramsByMaterialId.entries) {
+        final matId = entry.key;
+        final weighedGrams = entry.value;
+        if (weighedGrams <= 0) continue;
+
+        totalWeighed += weighedGrams;
+
+        final material = await (_db.select(_db.materials)
+              ..where((t) => t.id.equals(matId)))
+            .getSingleOrNull();
+
+        if (material != null) {
+          final prevStock = material.stockGrams;
+          final remainingStock = prevStock - weighedGrams;
+
+          // Update material stock
+          await (_db.update(_db.materials)..where((t) => t.id.equals(matId))).write(
+            MaterialsCompanion(
+              stockGrams: Value(remainingStock),
+            ),
+          );
+
+          // Write audit log in InventoryLogs
+          await _db.into(_db.inventoryLogs).insert(
+                InventoryLogsCompanion.insert(
+                  id: const Uuid().v4(),
+                  materialId: matId,
+                  deltaGrams: -weighedGrams,
+                  remainingStockGrams: remainingStock,
+                  reason: 'compounding',
+                  referenceBatchId: Value(batchId),
+                ),
+              );
+
+          itemResults.add(
+            CompoundedBatchItemResult(
+              materialId: matId,
+              materialName: material.name,
+              weighedGrams: weighedGrams,
+              previousStockGrams: prevStock,
+              remainingStockGrams: remainingStock,
+            ),
+          );
+        }
+      }
+    });
+
+    return CompoundingExecutionResult(
+      batchId: batchId,
+      batchNumber: batchNumber,
+      totalWeighedGrams: totalWeighed,
+      itemResults: itemResults,
+    );
+  }
 }
+
