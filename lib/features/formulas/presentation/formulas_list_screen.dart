@@ -101,7 +101,7 @@ class FormulasListScreen extends ConsumerWidget {
                             },
                             child: LiquidGlass(
                               padding: const EdgeInsets.all(16),
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(16),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [

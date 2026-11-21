@@ -98,7 +98,7 @@ class ReadyOilsScreen extends ConsumerWidget {
                           onTap: () => _openSheet(context, existing: oil),
                           child: LiquidGlass(
                             padding: const EdgeInsets.all(16),
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

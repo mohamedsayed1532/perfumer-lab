@@ -209,7 +209,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
       },
       child: LiquidGlass(
         padding: const EdgeInsets.all(14),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
             Container(
