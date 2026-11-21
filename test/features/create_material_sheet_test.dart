@@ -21,7 +21,7 @@ void main() {
     expect(find.text('New Material'), findsOneWidget);
     expect(find.text('Material Name *'), findsOneWidget);
     expect(find.text('CAS Number'), findsOneWidget);
-    expect(find.text('GENERAL INFORMATION'), findsOneWidget);
+    expect(find.text('ACCORD IDENTITY'), findsOneWidget);
     expect(find.text('Cancel'), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
   });

@@ -253,7 +253,7 @@ class _CreateOrEditReadyOilSheetState
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
-          color: AppColors.secondaryLabel.resolveFrom(context),
+          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
         ),
       ),
     );

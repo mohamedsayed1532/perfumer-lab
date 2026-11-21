@@ -267,7 +267,7 @@ class MaterialDetailSheet extends ConsumerWidget {
 
             // GHS Hazards
             if (pictograms.isNotEmpty) ...[
-              _buildSectionHeader(context, 'GHS HAZARD PICTOGRAMS'),
+              _buildSectionHeader(context, 'SAFETY CLASSIFICATION'),
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -417,7 +417,7 @@ class MaterialDetailSheet extends ConsumerWidget {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
-          color: AppColors.secondaryLabel.resolveFrom(context),
+          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
         ),
       ),
     );

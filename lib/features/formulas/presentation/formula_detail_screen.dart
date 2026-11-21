@@ -240,11 +240,11 @@ class FormulaDetailScreen extends ConsumerWidget {
                                       .resolveFrom(context),
                                 ),
                                 const SizedBox(height: 12),
-                                Text('No Ingredients Added Yet',
+                                Text('Nothing here yet',
                                     style: AppTypography.headline(context)),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Tap + to add aroma chemicals by ppt or %.',
+                                  'Tap + to add your first material and begin the accord.',
                                   style: AppTypography.subheadline(context),
                                 ),
                                 const SizedBox(height: 16),

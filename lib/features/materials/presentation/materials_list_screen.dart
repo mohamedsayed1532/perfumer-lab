@@ -184,18 +184,18 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
     switch (item.pyramidNote.toLowerCase()) {
       case 'top':
         noteIcon = CupertinoIcons.triangle;
-        noteColor = CupertinoColors.systemYellow;
+        noteColor = const Color(0xFFC8882A); // raw amber — bright volatile top notes
         noteLabel = 'T';
         break;
       case 'heart':
         noteIcon = CupertinoIcons.heart_fill;
-        noteColor = CupertinoColors.systemPink;
+        noteColor = const Color(0xFF8B6914); // warm mid amber — heart of the accord
         noteLabel = 'H';
         break;
       case 'base':
       default:
         noteIcon = CupertinoIcons.triangle_fill;
-        noteColor = CupertinoColors.systemPurple;
+        noteColor = const Color(0xFF7A2020); // deep garnet — grounding base notes
         noteLabel = 'B';
         break;
     }

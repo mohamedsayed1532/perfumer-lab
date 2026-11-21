@@ -241,7 +241,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
-              _buildSectionHeader('GENERAL INFORMATION'),
+              _buildSectionHeader('ACCORD IDENTITY'),
               _buildCard([
                 _buildTextField('Material Name *', _nameController,
                     placeholder: 'e.g. Iso E Super, Bergamot Oil'),
@@ -288,7 +288,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                     placeholder: '0.15'),
               ]),
               const SizedBox(height: 24),
-              _buildSectionHeader('PHYSICAL & REGULATORY PROPERTIES'),
+              _buildSectionHeader('MATERIAL PROFILE'),
               _buildCard([
                 _buildTextField('Density (g/cm³)', _densityController,
                     keyboardType:
@@ -306,7 +306,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                 _buildIntensitySlider(),
               ]),
               const SizedBox(height: 24),
-              _buildSectionHeader('GHS HAZARD PICTOGRAMS'),
+              _buildSectionHeader('SAFETY CLASSIFICATION'),
               GhsPicker(
                 selected: _ghsPictograms,
                 onChanged: (list) {
@@ -315,7 +315,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                 },
               ),
               const SizedBox(height: 24),
-              _buildSectionHeader('EXTERNAL REFERENCES & NOTES'),
+              _buildSectionHeader('REFERENCES & NOTES'),
               _buildCard([
                 _buildTextField('TGSC Link', _tgscUrlController,
                     placeholder: 'http://www.thegoodscentscompany.com/...'),
@@ -339,7 +339,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
-          color: AppColors.secondaryLabel.resolveFrom(context),
+          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
           letterSpacing: 0.2,
         ),
       ),

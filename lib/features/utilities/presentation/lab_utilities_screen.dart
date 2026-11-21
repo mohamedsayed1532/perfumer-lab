@@ -29,7 +29,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
                 child: Text(
-                  'REFERENCE CALCULATORS',
+                  'LAB CALCULATORS',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -47,7 +47,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.flame_fill,
-                      iconColor: CupertinoColors.systemIndigo,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'Alcohol Gauging & Proof',
                       subtitle: 'Dilute 96° to 80° or 70° with contraction factor',
                       onTap: () {
@@ -61,7 +61,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.drop_fill,
-                      iconColor: CupertinoColors.systemTeal,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'Solvent Density & Mass',
                       subtitle: 'Convert ml to grams via DPG, TEC, IPM density',
                       onTap: () {
@@ -75,7 +75,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.shield_lefthalf_fill,
-                      iconColor: CupertinoColors.systemGreen,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'IFRA 51st Amendment Limits',
                       subtitle: 'Category 4 fine fragrance threshold reference',
                       onTap: () {
@@ -96,7 +96,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 6),
                 child: Text(
-                  'LAB DATA & INTELLECTUAL PROPERTY',
+                  'FORMULAS & BACKUPS',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.arrow_down_doc_fill,
-                      iconColor: CupertinoColors.systemBlue,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'Backup Database (JSON)',
                       subtitle: 'Export formulas, raw materials & aging logs',
                       onTap: () async {
@@ -126,7 +126,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.arrow_up_doc_fill,
-                      iconColor: CupertinoColors.systemPurple,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'Restore Database (JSON)',
                       subtitle: 'Import a previously exported JSON lab backup',
                       onTap: () async {
@@ -146,7 +146,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                     _buildUtilityTile(
                       context,
                       icon: CupertinoIcons.table,
-                      iconColor: CupertinoColors.systemOrange,
+                      iconColor: AppColors.accent.resolveFrom(context),
                       title: 'Export Materials Catalog (CSV)',
                       subtitle: 'Download spreadsheet for physical inventory binder',
                       onTap: () async {

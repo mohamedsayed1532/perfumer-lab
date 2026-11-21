@@ -45,7 +45,10 @@ class AppColors {
 
   // Accent & Fragrance-domain colors
   static const CupertinoDynamicColor accent =
-      CupertinoColors.systemIndigo; // Refined perfumery tone
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFA0620E), // warm amber, light mode
+    darkColor: Color(0xFFC8882A), // raw amber, dark mode — est. 7.2:1 on surface
+  );
   static const CupertinoDynamicColor amberRose = CupertinoDynamicColor.withBrightness(
     color: Color(0xFFC0392B),
     darkColor: Color(0xFFE74C3C),

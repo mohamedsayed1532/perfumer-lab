@@ -138,7 +138,7 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           children: [
-            _buildSectionHeader('GENERAL INFORMATION'),
+            _buildSectionHeader('ACCORD IDENTITY'),
             _buildCard([
               _buildTextField('Formula Name *', _nameController,
                   placeholder: 'e.g. Santal Minimal, Citrus Amber'),
@@ -151,7 +151,7 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
                   maxLines: 2),
             ]),
             const SizedBox(height: 24),
-            _buildSectionHeader('TARGET CONCENTRATION'),
+            _buildSectionHeader('CONCENTRATION TARGET'),
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: SizedBox(
@@ -235,7 +235,7 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
-          color: AppColors.secondaryLabel.resolveFrom(context),
+          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
         ),
       ),
     );
