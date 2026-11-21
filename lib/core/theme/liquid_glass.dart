@@ -1,11 +1,10 @@
-import 'dart:ui';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'app_colors.dart';
 
 /// Apple HIG Liquid Glass component.
 ///
-/// Implements Apple's dynamic translucent material combining optical Gaussian
-/// blur, specular gradient borders, subtle surface gloss, and adaptive luminosity.
+/// Uses high-efficiency GPU-accelerated container rendering without stacking
+/// BackdropFilter on every list row to prevent scroll frame drops on mobile hardware.
 class LiquidGlass extends StatelessWidget {
   final Widget child;
   final double blurSigma;
@@ -35,97 +34,60 @@ class LiquidGlass extends StatelessWidget {
     final radius = borderRadius ?? BorderRadius.circular(18);
     final isDark = CupertinoTheme.brightnessOf(context) == Brightness.dark;
 
-    // Luminous glass tint with subtle specular gradient
-    final glassColor = backgroundColor ??
-        (isDark
-            ? const Color(0x1CFFFFFF) // 11% white glass over dark
-            : const Color(0xC0FFFFFF)); // 75% white glass over light
-
     final topBorderColor = isDark
-        ? const Color(0x45FFFFFF) // 27% bright specular top edge
-        : const Color(0x80FFFFFF); // Light specular top edge
+        ? const Color(0x38FFFFFF) // 22% specular top edge
+        : const Color(0x60FFFFFF);
 
     final effectiveBorderColor = borderColor ?? topBorderColor;
 
     return Container(
+      padding: padding,
       decoration: BoxDecoration(
+        color: backgroundColor ??
+            (isDark
+                ? const Color(0xCC1A1C29) // Rich solid translucent midnight slab
+                : const Color(0xF2FFFFFF)),
         borderRadius: radius,
+        border: hasSpecularBorder
+            ? Border.all(
+                color: effectiveBorderColor,
+                width: borderWidth,
+              )
+            : null,
         boxShadow: customShadow ??
             (isDark
                 ? [
                     BoxShadow(
-                      color: const Color(0x40000000),
-                      blurRadius: 24,
-                      offset: const Offset(0, 10),
+                      color: const Color(0x30000000),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
                       spreadRadius: -2,
-                    ),
-                    BoxShadow(
-                      color: AppColors.accent
-                          .resolveFrom(context)
-                          .withValues(alpha: 0.04),
-                      blurRadius: 30,
-                      offset: const Offset(0, 4),
                     ),
                   ]
                 : [
                     BoxShadow(
-                      color: const Color(0x1A000000),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
+                      color: const Color(0x12000000),
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
                     ),
                   ]),
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xD9222538),
+                  Color(0xB3151724),
+                ],
+              )
+            : null,
       ),
-      child: ClipRRect(
-        borderRadius: radius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: blurSigma,
-            sigmaY: blurSigma,
-          ),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              color: glassColor,
-              borderRadius: radius,
-              border: hasSpecularBorder
-                  ? Border.all(
-                      color: effectiveBorderColor,
-                      width: borderWidth,
-                    )
-                  : null,
-              gradient: isDark
-                  ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        const Color(0x24FFFFFF),
-                        const Color(0x08FFFFFF),
-                      ],
-                      stops: const [0.0, 1.0],
-                    )
-                  : LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        const Color(0xE6FFFFFF),
-                        const Color(0xB3FFFFFF),
-                      ],
-                    ),
-            ),
-            child: child,
-          ),
-        ),
-      ),
+      child: child,
     );
   }
 }
 
 /// Ambient background canvas for Liquid Glass.
-///
-/// Under pure #000000 OLED black, glass blur and refraction are optically invisible.
-/// This scaffold provides the deep atmospheric dark-lab mesh gradient with subtle
-/// essence glows (indigo and warm amber highlights) so that Liquid Glass controls
-/// and cards refract and blur with visible optical depth.
 class LiquidGlassBackground extends StatelessWidget {
   final Widget child;
   const LiquidGlassBackground({super.key, required this.child});
