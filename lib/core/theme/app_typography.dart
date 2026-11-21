@@ -6,42 +6,51 @@ class AppTypography {
   AppTypography._();
 
   static TextStyle largeTitle(BuildContext context) => TextStyle(
-        fontFamily: '.SF Pro Display',
+        fontFamily: 'serif',
         fontSize: 34,
         fontWeight: FontWeight.w700,
-        letterSpacing: 0.37,
-        color: AppColors.label.resolveFrom(context),
-      );
-
-  static TextStyle title1(BuildContext context) => TextStyle(
-        fontFamily: '.SF Pro Display',
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.36,
-        color: AppColors.label.resolveFrom(context),
-      );
-
-  static TextStyle title2(BuildContext context) => TextStyle(
-        fontFamily: '.SF Pro Display',
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
         letterSpacing: 0.35,
         color: AppColors.label.resolveFrom(context),
       );
 
+  static TextStyle title1(BuildContext context) => TextStyle(
+        fontFamily: 'serif',
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+        color: AppColors.label.resolveFrom(context),
+      );
+
+  static TextStyle title2(BuildContext context) => TextStyle(
+        fontFamily: 'serif',
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.25,
+        color: AppColors.label.resolveFrom(context),
+      );
+
   static TextStyle title3(BuildContext context) => TextStyle(
-        fontFamily: '.SF Pro Text',
+        fontFamily: 'serif',
         fontSize: 20,
         fontWeight: FontWeight.w600,
-        letterSpacing: 0.38,
+        letterSpacing: 0.2,
+        color: AppColors.label.resolveFrom(context),
+      );
+
+  static TextStyle atelierCardTitle(BuildContext context, {double fontSize = 17}) =>
+      TextStyle(
+        fontFamily: 'serif',
+        fontSize: fontSize,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
         color: AppColors.label.resolveFrom(context),
       );
 
   static TextStyle headline(BuildContext context) => TextStyle(
-        fontFamily: '.SF Pro Text',
+        fontFamily: 'serif',
         fontSize: 17,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.41,
+        letterSpacing: 0.1,
         color: AppColors.label.resolveFrom(context),
       );
 

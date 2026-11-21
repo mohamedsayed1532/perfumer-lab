@@ -25,10 +25,10 @@ class FormulasListScreen extends ConsumerWidget {
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () => _openCreateFormula(context),
-                child: const Icon(
+                child: Icon(
                   CupertinoIcons.add,
                   size: 26,
-                  color: CupertinoColors.activeBlue,
+                  color: AppColors.accent.resolveFrom(context),
                 ),
               ),
             ),
@@ -101,37 +101,99 @@ class FormulasListScreen extends ConsumerWidget {
                             },
                             child: LiquidGlass(
                               padding: const EdgeInsets.all(16),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(18),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        formula.name,
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.label.resolveFrom(context),
-                                        ),
+                                  Container(
+                                    width: 46,
+                                    height: 46,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.accent
+                                          .resolveFrom(context)
+                                          .withValues(alpha: 0.16),
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: AppColors.accent
+                                            .resolveFrom(context)
+                                            .withValues(alpha: 0.35),
+                                        width: 0.75,
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'v${formula.version} • Concentration: ${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: AppColors.secondaryLabel
-                                              .resolveFrom(context),
-                                        ),
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        CupertinoIcons.lab_flask_solid,
+                                        size: 22,
+                                        color: AppColors.accent
+                                            .resolveFrom(context),
                                       ),
-                                    ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          formula.name,
+                                          style: AppTypography.atelierCardTitle(
+                                              context,
+                                              fontSize: 18),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2.5),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.accent
+                                                    .resolveFrom(context)
+                                                    .withValues(alpha: 0.14),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                border: Border.all(
+                                                  color: AppColors.accent
+                                                      .resolveFrom(context)
+                                                      .withValues(alpha: 0.3),
+                                                  width: 0.5,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                '${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.accent
+                                                      .resolveFrom(context),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              formula.version.startsWith('v')
+                                                  ? formula.version
+                                                  : 'v${formula.version}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.secondaryLabel
+                                                    .resolveFrom(context),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   Icon(
                                     CupertinoIcons.chevron_forward,
                                     size: 16,
-                                    color:
-                                        AppColors.tertiaryLabel.resolveFrom(context),
+                                    color: AppColors.accent
+                                        .resolveFrom(context)
+                                        .withValues(alpha: 0.5),
                                   ),
                                 ],
                               ),

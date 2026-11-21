@@ -26,10 +26,10 @@ class ReadyOilsScreen extends ConsumerWidget {
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () => _openSheet(context),
-                child: const Icon(
+                child: Icon(
                   CupertinoIcons.add,
                   size: 26,
-                  color: CupertinoColors.activeBlue,
+                  color: AppColors.accent.resolveFrom(context),
                 ),
               ),
             ),
@@ -109,12 +109,9 @@ class ReadyOilsScreen extends ConsumerWidget {
                                     Expanded(
                                       child: Text(
                                         oil.name,
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.label
-                                              .resolveFrom(context),
-                                        ),
+                                        style: AppTypography.atelierCardTitle(
+                                            context,
+                                            fontSize: 18),
                                       ),
                                     ),
                                     Text(

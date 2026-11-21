@@ -289,18 +289,18 @@ class FormulaDetailScreen extends ConsumerWidget {
                               Color noteColor;
                               switch (mat.pyramidNote.toLowerCase()) {
                                 case 'top':
-                                  noteIcon = CupertinoIcons.triangle;
-                                  noteColor = CupertinoColors.systemYellow;
+                                  noteIcon = CupertinoIcons.sparkles;
+                                  noteColor = const Color(0xFFE5A93C);
                                   break;
                                 case 'heart':
                                 case 'middle':
                                   noteIcon = CupertinoIcons.heart_fill;
-                                  noteColor = CupertinoColors.systemPink;
+                                  noteColor = const Color(0xFFD47355);
                                   break;
                                 case 'base':
                                 default:
-                                  noteIcon = CupertinoIcons.triangle_fill;
-                                  noteColor = CupertinoColors.systemPurple;
+                                  noteIcon = CupertinoIcons.shield_fill;
+                                  noteColor = const Color(0xFF8A3B3B);
                                   break;
                               }
 
@@ -352,12 +352,9 @@ class FormulaDetailScreen extends ConsumerWidget {
                                           children: [
                                             Text(
                                               mat.name,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.label
-                                                    .resolveFrom(context),
-                                              ),
+                                              style: AppTypography.atelierCardTitle(
+                                                  context,
+                                                  fontSize: 16),
                                             ),
                                             const SizedBox(height: 3),
                                             Text(

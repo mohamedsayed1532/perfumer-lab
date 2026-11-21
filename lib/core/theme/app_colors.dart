@@ -43,35 +43,35 @@ class AppColors {
   static const CupertinoDynamicColor opaqueSeparator =
       CupertinoColors.opaqueSeparator;
 
-  // Accent & Fragrance-domain colors
+  // Accent & Fragrance-domain colors — Radiant Champagne & Warm Amber Atelier Palette
   static const CupertinoDynamicColor accent =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFA0620E), // warm amber, light mode
-    darkColor: Color(0xFFC8882A), // raw amber, dark mode — est. 7.2:1 on surface
+    color: Color(0xFF9E6510), // Warm amber-brass, light mode
+    darkColor: Color(0xFFE5A93C), // Radiant champagne amber gold, dark mode
   );
   static const CupertinoDynamicColor amberRose = CupertinoDynamicColor.withBrightness(
     color: Color(0xFFC0392B),
-    darkColor: Color(0xFFE74C3C),
+    darkColor: Color(0xFFE57373),
   );
   static const CupertinoDynamicColor goldAccent = CupertinoDynamicColor.withBrightness(
     color: Color(0xFFD4AC0D),
-    darkColor: Color(0xFFF1C40F),
+    darkColor: Color(0xFFF3C668),
   );
   static const CupertinoDynamicColor naturalGreen = CupertinoDynamicColor.withBrightness(
     color: Color(0xFF27AE60),
-    darkColor: Color(0xFF2ECC71),
+    darkColor: Color(0xFF48BB78),
   );
 
   // Liquid Glass base colors
   static const CupertinoDynamicColor liquidGlassBg =
       CupertinoDynamicColor.withBrightness(
     color: Color(0xD9FFFFFF), // 85% translucent white frosted glass
-    darkColor: Color(0x80161824), // 50% translucent deep midnight glass
+    darkColor: Color(0xD012131C), // Deep obsidian glass
   );
 
   static const CupertinoDynamicColor liquidGlassBorder =
       CupertinoDynamicColor.withBrightness(
     color: Color(0x4DFFFFFF), // 30% specular light highlight
-    darkColor: Color(0x38FFFFFF), // 22% specular dark highlight
+    darkColor: Color(0x35E5A93C), // Specular warm champagne gold highlight
   );
 }

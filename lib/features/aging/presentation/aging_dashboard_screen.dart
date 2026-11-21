@@ -142,6 +142,9 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
     final progress =
         (targetDays > 0) ? (daysElapsed / targetDays).clamp(0.0, 1.0) : 1.0;
     final isMaturation = batch.stage == 'maturation';
+    final stageColor = isMaturation
+        ? const Color(0xFFD47355) // Rich cognac amber for maturation
+        : AppColors.accent.resolveFrom(context); // Radiant champagne amber for maceration
 
     return GestureDetector(
       onTap: () => _openEditSheet(context, batch),
@@ -158,29 +161,31 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isMaturation
-                        ? CupertinoColors.systemPurple.withValues(alpha: 0.18)
-                        : CupertinoColors.systemTeal.withValues(alpha: 0.18),
+                    color: stageColor.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: stageColor.withValues(alpha: 0.35),
+                      width: 0.75,
+                    ),
                   ),
                   child: Text(
                     isMaturation
                         ? 'MATURATION (OIL)'
                         : 'MACERATION (PERFUME)',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
-                      color: isMaturation
-                          ? CupertinoColors.systemPurple
-                          : CupertinoColors.systemTeal,
+                      letterSpacing: 0.4,
+                      color: stageColor,
                     ),
                   ),
                 ),
                 Text(
                   batch.batchNumber,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: 0.3,
                     color: AppColors.secondaryLabel.resolveFrom(context),
                   ),
                 ),
@@ -189,11 +194,7 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             const SizedBox(height: 10),
             Text(
               batch.name,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.label.resolveFrom(context),
-              ),
+              style: AppTypography.atelierCardTitle(context, fontSize: 18),
             ),
             const SizedBox(height: 4),
             Text(
@@ -229,16 +230,24 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Container(
-                height: 8,
-                color: AppColors.separator.resolveFrom(context),
+                height: 7,
+                color: AppColors.separator.resolveFrom(context).withValues(alpha: 0.3),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
                   widthFactor: progress,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: progress >= 1.0
-                          ? CupertinoColors.systemGreen
-                          : AppColors.accent.resolveFrom(context),
+                      gradient: LinearGradient(
+                        colors: progress >= 1.0
+                            ? const [
+                                CupertinoColors.systemGreen,
+                                Color(0xFF68D391)
+                              ]
+                            : [
+                                AppColors.accent.resolveFrom(context),
+                                const Color(0xFFF6CE78),
+                              ],
+                      ),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -249,63 +258,79 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CupertinoButton(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                  color: AppColors.secondarySystemGroupedBackground
-                      .resolveFrom(context),
-                  borderRadius: BorderRadius.circular(10),
-                  onPressed: () => _openEditSheet(context, batch),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        CupertinoIcons.pencil,
-                        size: 14,
-                        color: AppColors.secondaryLabel.resolveFrom(context),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Edit Batch',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.secondaryLabel.resolveFrom(context),
-                        ),
-                      ),
-                    ],
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.22),
+                      width: 0.5,
+                    ),
                   ),
-                ),
-                CupertinoButton(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                  color: AppColors.secondarySystemGroupedBackground
-                      .resolveFrom(context),
-                  borderRadius: BorderRadius.circular(10),
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (ctx) => AddEvaluationSheet(batch: batch),
-                    );
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        CupertinoIcons.pencil_ellipsis_rectangle,
-                        size: 15,
-                        color: AppColors.accent.resolveFrom(context),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Log Sensory Check',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                  child: CupertinoButton(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    minimumSize: Size.zero,
+                    onPressed: () => _openEditSheet(context, batch),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          CupertinoIcons.pencil,
+                          size: 14,
                           color: AppColors.accent.resolveFrom(context),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 5),
+                        Text(
+                          'Edit Batch',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.accent.resolveFrom(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.22),
+                      width: 0.5,
+                    ),
+                  ),
+                  child: CupertinoButton(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                    minimumSize: Size.zero,
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (ctx) => AddEvaluationSheet(batch: batch),
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          CupertinoIcons.pencil_ellipsis_rectangle,
+                          size: 14,
+                          color: AppColors.accent.resolveFrom(context),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Log Sensory Check',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.accent.resolveFrom(context),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

@@ -40,10 +40,10 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                     builder: (ctx) => const CreateMaterialSheet(),
                   );
                 },
-                child: const Icon(
+                child: Icon(
                   CupertinoIcons.add,
                   size: 26,
-                  color: CupertinoColors.activeBlue,
+                  color: AppColors.accent.resolveFrom(context),
                 ),
               ),
           ),
@@ -177,26 +177,26 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   }
 
   Widget _buildMaterialCard(BuildContext context, Material item) {
-    // Pyramid note identity — icon + color per note classification
+    // Pyramid note identity — bespoke apothecary organ badge
     IconData noteIcon;
     Color noteColor;
     String noteLabel;
     switch (item.pyramidNote.toLowerCase()) {
       case 'top':
-        noteIcon = CupertinoIcons.triangle;
-        noteColor = const Color(0xFFC8882A); // raw amber — bright volatile top notes
-        noteLabel = 'T';
+        noteIcon = CupertinoIcons.sparkles;
+        noteColor = const Color(0xFFE5A93C); // Radiant champagne amber — volatile top note
+        noteLabel = 'TOP';
         break;
       case 'heart':
         noteIcon = CupertinoIcons.heart_fill;
-        noteColor = const Color(0xFF8B6914); // warm mid amber — heart of the accord
-        noteLabel = 'H';
+        noteColor = const Color(0xFFD47355); // Velvet rose damask — accord heart
+        noteLabel = 'HEART';
         break;
       case 'base':
       default:
-        noteIcon = CupertinoIcons.triangle_fill;
-        noteColor = const Color(0xFF7A2020); // deep garnet — grounding base notes
-        noteLabel = 'B';
+        noteIcon = CupertinoIcons.shield_fill;
+        noteColor = const Color(0xFF8A3B3B); // Smoked resinous oud — grounding base
+        noteLabel = 'BASE';
         break;
     }
 
@@ -208,7 +208,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
         );
       },
       child: LiquidGlass(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
@@ -216,19 +216,25 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: noteColor.withValues(alpha: 0.22),
+                color: noteColor.withValues(alpha: 0.16),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: noteColor.withValues(alpha: 0.35),
+                  width: 0.75,
+                ),
               ),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(noteIcon, size: 18, color: noteColor),
+                    Icon(noteIcon, size: 16, color: noteColor),
+                    const SizedBox(height: 1),
                     Text(
                       noteLabel,
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 8,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
                         color: noteColor,
                         height: 1.0,
                       ),
@@ -244,19 +250,16 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 children: [
                   Text(
                     item.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.label.resolveFrom(context),
-                    ),
+                    style: AppTypography.atelierCardTitle(context, fontSize: 16),
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${item.pyramidNote.toUpperCase()} • ${item.dilutionPercent.toStringAsFixed(0)}% in ${item.defaultSolvent ?? "Neat"}',
+                    '${item.dilutionPercent.toStringAsFixed(0)}% in ${item.defaultSolvent?.split(" ")[0] ?? "Neat"}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
                       color: AppColors.secondaryLabel.resolveFrom(context),
                     ),
                   ),
@@ -277,12 +280,23 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                         : CupertinoColors.systemRed,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  item.casNumber ?? 'No CAS',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.tertiaryLabel.resolveFrom(context),
+                const SizedBox(height: 3),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondarySystemGroupedBackground.resolveFrom(context),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    item.casNumber != null && item.casNumber!.isNotEmpty
+                        ? item.casNumber!
+                        : 'No CAS',
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.2,
+                      color: AppColors.tertiaryLabel.resolveFrom(context),
+                    ),
                   ),
                 ),
               ],

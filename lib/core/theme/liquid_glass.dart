@@ -35,7 +35,7 @@ class LiquidGlass extends StatelessWidget {
     final isDark = CupertinoTheme.brightnessOf(context) == Brightness.dark;
 
     final topBorderColor = isDark
-        ? const Color(0x38FFFFFF) // 22% specular top edge
+        ? const Color(0x35E5A93C) // Specular warm champagne gold rim highlight
         : const Color(0x60FFFFFF);
 
     final effectiveBorderColor = borderColor ?? topBorderColor;
@@ -45,7 +45,7 @@ class LiquidGlass extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ??
             (isDark
-                ? const Color(0xCC1A1C29) // Rich solid translucent midnight slab
+                ? const Color(0xEB13141D) // Rich solid translucent obsidian slab
                 : const Color(0xF2FFFFFF)),
         borderRadius: radius,
         border: hasSpecularBorder
@@ -57,18 +57,23 @@ class LiquidGlass extends StatelessWidget {
         boxShadow: customShadow ??
             (isDark
                 ? [
-                    BoxShadow(
-                      color: const Color(0x30000000),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
+                    const BoxShadow(
+                      color: Color(0x50000000),
+                      blurRadius: 20,
+                      offset: Offset(0, 8),
                       spreadRadius: -2,
+                    ),
+                    const BoxShadow(
+                      color: Color(0x0DE5A93C),
+                      blurRadius: 16,
+                      offset: Offset(0, 1),
                     ),
                   ]
                 : [
-                    BoxShadow(
-                      color: const Color(0x12000000),
+                    const BoxShadow(
+                      color: Color(0x12000000),
                       blurRadius: 14,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     ),
                   ]),
         gradient: isDark
@@ -76,8 +81,8 @@ class LiquidGlass extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xD9222538),
-                  Color(0xB3151724),
+                  Color(0xF0181A25), // Radiant upper obsidian glass
+                  Color(0xE00E0F17), // Deep atelier velvet glass
                 ],
               )
             : null,
@@ -105,14 +110,14 @@ class LiquidGlassBackground extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFF08090D), // Deep obsidian lab base
+        color: Color(0xFF07080C), // Pure obsidian atelier base
         gradient: RadialGradient(
-          center: Alignment(-0.6, -0.7),
+          center: Alignment(-0.5, -0.6),
           radius: 1.4,
           colors: [
-            Color(0xFF16152B), // Ambient ethereal violet-indigo glow
-            Color(0xFF0D0E17), // Deep midnight mid-tone
-            Color(0xFF06070A), // Rich obsidian boundary
+            Color(0xFF1D1711), // Ethereal warm amber-resin atmospheric glow
+            Color(0xFF0C0D13), // Deep atelier mid-tone
+            Color(0xFF060709), // Obsidian boundary
           ],
           stops: [0.0, 0.55, 1.0],
         ),

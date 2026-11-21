@@ -115,13 +115,13 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
               color: isDark
-                  ? const Color(0xD0171825) // Translucent deep midnight glass
+                  ? const Color(0xE012131C) // Translucent deep obsidian glass
                   : const Color(0xE8FFFFFF), // Frosted white glass
               border: Border.all(
                 color: isDark
-                    ? const Color(0x38FFFFFF)
+                    ? const Color(0x35E5A93C) // Specular warm champagne highlight
                     : const Color(0x60FFFFFF),
-                width: 0.6,
+                width: 0.75,
               ),
             ),
             child: Row(
@@ -160,17 +160,9 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
     final activeColor = AppColors.accent.resolveFrom(context);
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
       padding: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? (isDark
-                ? activeColor.withValues(alpha: 0.22)
-                : activeColor.withValues(alpha: 0.12))
-            : CupertinoColors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -192,6 +184,7 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
             style: TextStyle(
               fontSize: 10.5,
               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              letterSpacing: 0.2,
               color: isSelected
                   ? activeColor
                   : (isDark
@@ -199,6 +192,26 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
                       : const Color(0x8A000000)),
             ),
           ),
+          if (isSelected) ...[
+            const SizedBox(height: 2),
+            Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: activeColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: activeColor.withValues(alpha: 0.6),
+                    blurRadius: 4,
+                    spreadRadius: 0.5,
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            const SizedBox(height: 6),
+          ],
         ],
       ),
     );
