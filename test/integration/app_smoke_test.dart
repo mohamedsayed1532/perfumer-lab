@@ -41,28 +41,28 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    // Tap Materials tab
-    await tester.tap(find.text('Materials'));
+    // Tap Materials tab (find by ValueKey)
+    await tester.tap(find.byKey(const ValueKey('tab_Materials')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Raw Materials'), findsWidgets);
 
     // Tap Ready Oils tab
-    await tester.tap(find.text('Ready Oils'));
+    await tester.tap(find.byKey(const ValueKey('tab_Ready Oils')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Ready Fragrance Oils'), findsWidgets);
 
     // Tap Aging tab
-    await tester.tap(find.text('Aging'));
+    await tester.tap(find.byKey(const ValueKey('tab_Aging')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Aging & Batches'), findsWidgets);
 
     // Tap Utilities tab
-    await tester.tap(find.text('Utilities'));
+    await tester.tap(find.byKey(const ValueKey('tab_Utilities')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Lab Utilities'), findsWidgets);
   });
 }

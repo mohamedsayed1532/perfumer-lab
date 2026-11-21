@@ -220,7 +220,7 @@ class ReadyOilsScreen extends ConsumerWidget {
               child: Center(child: Text('Error: $err')),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
        ),
       ),
