@@ -19,6 +19,20 @@ class MaterialsListScreen extends ConsumerStatefulWidget {
 class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   String _searchQuery = '';
   String _selectedFilter = 'all';
+  late final FocusNode _searchFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFocusNode = FocusNode();
+    _searchFocusNode.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +66,32 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: CupertinoSearchTextField(
+                focusNode: _searchFocusNode,
                 placeholder: 'Search by material, CAS, botanical...',
+                placeholderStyle: TextStyle(
+                  color: AppColors.tertiaryLabel.resolveFrom(context),
+                  fontSize: 14.5,
+                ),
+                style: TextStyle(
+                  color: AppColors.label.resolveFrom(context),
+                  fontSize: 14.5,
+                ),
+                itemColor: AppColors.accent.resolveFrom(context),
+                cursorColor: AppColors.accent.resolveFrom(context),
+                decoration: BoxDecoration(
+                  color: AppColors.secondarySystemGroupedBackground
+                      .resolveFrom(context),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: _searchFocusNode.hasFocus
+                        ? AppColors.accent.resolveFrom(context)
+                        : AppColors.cardBorder.resolveFrom(context),
+                    width: _searchFocusNode.hasFocus ? 1.25 : 0.75,
+                  ),
+                ),
+                padding: const EdgeInsetsDirectional.fromSTEB(6, 10, 6, 10),
+                prefixInsets:
+                    const EdgeInsetsDirectional.fromSTEB(10, 10, 6, 10),
                 onChanged: (val) =>
                     setState(() => _searchQuery = val.toLowerCase()),
               ),
@@ -250,6 +289,8 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 children: [
                   Text(
                     item.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTypography.atelierCardTitle(context, fontSize: 16),
                   ),
                   const SizedBox(height: 3),
@@ -266,40 +307,51 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 ],
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${item.stockGrams.toStringAsFixed(1)} g',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                    color: item.stockGrams > 0
-                        ? AppColors.label.resolveFrom(context)
-                        : CupertinoColors.systemRed,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                  decoration: BoxDecoration(
-                    color: AppColors.secondarySystemGroupedBackground.resolveFrom(context),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    item.casNumber != null && item.casNumber!.isNotEmpty
-                        ? item.casNumber!
-                        : 'No CAS',
+            const SizedBox(width: 8),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 110),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${item.stockGrams.toStringAsFixed(1)} g',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                      color: AppColors.tertiaryLabel.resolveFrom(context),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: item.stockGrams > 0
+                          ? AppColors.label.resolveFrom(context)
+                          : CupertinoColors.systemRed,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 3),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 5, vertical: 1.5),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondarySystemGroupedBackground
+                          .resolveFrom(context),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item.casNumber != null && item.casNumber!.isNotEmpty
+                          ? item.casNumber!
+                          : 'No CAS',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.2,
+                        color: AppColors.tertiaryLabel.resolveFrom(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

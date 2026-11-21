@@ -80,130 +80,198 @@ class FormulasListScreen extends ConsumerWidget {
                   );
                 }
 
-                return SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final formula = formulas[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (_) =>
-                                      FormulaDetailScreen(formulaId: formula.id),
+                return SliverMainAxisGroup(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: AppColors
+                                    .secondarySystemGroupedBackground
+                                    .resolveFrom(context),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.cardBorder
+                                      .resolveFrom(context),
+                                  width: 0.75,
                                 ),
-                              );
-                            },
-                            child: LiquidGlass(
-                              padding: const EdgeInsets.all(16),
-                              borderRadius: BorderRadius.circular(18),
+                              ),
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
-                                    width: 46,
-                                    height: 46,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.accent
-                                          .resolveFrom(context)
-                                          .withValues(alpha: 0.16),
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        color: AppColors.accent
-                                            .resolveFrom(context)
-                                            .withValues(alpha: 0.35),
-                                        width: 0.75,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        CupertinoIcons.lab_flask_solid,
-                                        size: 22,
-                                        color: AppColors.accent
-                                            .resolveFrom(context),
-                                      ),
+                                    width: 6,
+                                    height: 6,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF4ADE80),
+                                      shape: BoxShape.circle,
                                     ),
                                   ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          formula.name,
-                                          style: AppTypography.atelierCardTitle(
-                                              context,
-                                              fontSize: 18),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 2.5),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.accent
-                                                    .resolveFrom(context)
-                                                    .withValues(alpha: 0.14),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                border: Border.all(
-                                                  color: AppColors.accent
-                                                      .resolveFrom(context)
-                                                      .withValues(alpha: 0.3),
-                                                  width: 0.5,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColors.accent
-                                                      .resolveFrom(context),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              formula.version.startsWith('v')
-                                                  ? formula.version
-                                                  : 'v${formula.version}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.secondaryLabel
-                                                    .resolveFrom(context),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                  const SizedBox(width: 7),
+                                  Text(
+                                    '${formulas.length} ${formulas.length == 1 ? 'Active Formulation' : 'Active Formulations'} • IFRA Compliant',
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.2,
+                                      color: AppColors.secondaryLabel
+                                          .resolveFrom(context),
                                     ),
-                                  ),
-                                  Icon(
-                                    CupertinoIcons.chevron_forward,
-                                    size: 16,
-                                    color: AppColors.accent
-                                        .resolveFrom(context)
-                                        .withValues(alpha: 0.5),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      childCount: formulas.length,
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final formula = formulas[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (_) => FormulaDetailScreen(
+                                          formulaId: formula.id),
+                                    ),
+                                  );
+                                },
+                                child: LiquidGlass(
+                                  padding: const EdgeInsets.all(16),
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 46,
+                                        height: 46,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.accent
+                                              .resolveFrom(context)
+                                              .withValues(alpha: 0.16),
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
+                                            color: AppColors.accent
+                                                .resolveFrom(context)
+                                                .withValues(alpha: 0.35),
+                                            width: 0.75,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            CupertinoIcons.lab_flask_solid,
+                                            size: 22,
+                                            color: AppColors.accent
+                                                .resolveFrom(context),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              formula.name,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppTypography
+                                                  .atelierCardTitle(context,
+                                                      fontSize: 18),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 2.5),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.accent
+                                                        .resolveFrom(context)
+                                                        .withValues(
+                                                            alpha: 0.14),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    border: Border.all(
+                                                      color: AppColors.accent
+                                                          .resolveFrom(context)
+                                                          .withValues(
+                                                              alpha: 0.3),
+                                                      width: 0.5,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    '${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColors.accent
+                                                          .resolveFrom(
+                                                              context),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Flexible(
+                                                  child: Text(
+                                                    formula.version
+                                                            .startsWith('v')
+                                                        ? formula.version
+                                                        : 'v${formula.version}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: AppColors
+                                                          .secondaryLabel
+                                                          .resolveFrom(context),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Icon(
+                                        CupertinoIcons.chevron_forward,
+                                        size: 16,
+                                        color: AppColors.accent
+                                            .resolveFrom(context)
+                                            .withValues(alpha: 0.5),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          childCount: formulas.length,
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
               loading: () => const SliverFillRemaining(

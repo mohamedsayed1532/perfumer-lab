@@ -383,20 +383,24 @@ class FormulaDetailScreen extends ConsumerWidget {
                                                             .systemGreen,
                                                   ),
                                                   const SizedBox(width: 4),
-                                                  Text(
-                                                    isOverIfra
-                                                        ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%'
-                                                        : 'IFRA Safe: ${skinExposure.toStringAsFixed(2)}% (Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%)',
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      fontWeight: isOverIfra
-                                                          ? FontWeight.w700
-                                                          : FontWeight.w500,
-                                                      color: isOverIfra
-                                                          ? CupertinoColors
-                                                              .systemRed
-                                                          : CupertinoColors
-                                                              .systemGreen,
+                                                  Flexible(
+                                                    child: Text(
+                                                      isOverIfra
+                                                          ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%'
+                                                          : 'IFRA Safe: ${skinExposure.toStringAsFixed(2)}% (Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%)',
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight: isOverIfra
+                                                            ? FontWeight.w700
+                                                            : FontWeight.w500,
+                                                        color: isOverIfra
+                                                            ? CupertinoColors
+                                                                .systemRed
+                                                            : CupertinoColors
+                                                                .systemGreen,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
@@ -405,12 +409,17 @@ class FormulaDetailScreen extends ConsumerWidget {
                                           ],
                                         ),
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            '${item.partsPerThousand.toStringAsFixed(1)} ppt',
+                                      const SizedBox(width: 8),
+                                      ConstrainedBox(
+                                        constraints: const BoxConstraints(minWidth: 54),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              '${item.partsPerThousand.toStringAsFixed(1)} ppt',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             style:
                                                 AppTypography.precisionNumber(
                                               context,
@@ -420,6 +429,8 @@ class FormulaDetailScreen extends ConsumerWidget {
                                           const SizedBox(height: 2),
                                           Text(
                                             '${percent.toStringAsFixed(2)}%',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -429,6 +440,7 @@ class FormulaDetailScreen extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
+                                    ),
                                     ],
                                   ),
                                 ),

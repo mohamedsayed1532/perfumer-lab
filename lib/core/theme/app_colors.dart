@@ -74,4 +74,10 @@ class AppColors {
     color: Color(0x4DFFFFFF), // 30% specular light highlight
     darkColor: Color(0x35E5A93C), // Specular warm champagne gold highlight
   );
+
+  static const CupertinoDynamicColor cardBorder =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0x1A000000), // Subtle hairline card border (light)
+    darkColor: Color(0x24FFFFFF), // Translucent specular hairline (dark)
+  );
 }

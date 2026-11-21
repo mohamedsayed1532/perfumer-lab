@@ -141,7 +141,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
   Future<void> _save() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      await LabHaptics.warning();
+      LabHaptics.warning();
       showCupertinoDialog(
         context: context,
         builder: (ctx) => CupertinoAlertDialog(
@@ -210,7 +210,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await _onWillPop();
-        if (shouldPop && mounted) Navigator.pop(context);
+        if (shouldPop && context.mounted) Navigator.pop(context);
       },
       child: CupertinoPageScaffold(
         backgroundColor:
@@ -224,7 +224,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
             padding: EdgeInsets.zero,
             onPressed: () async {
               final shouldPop = await _onWillPop();
-              if (shouldPop && mounted) Navigator.pop(context);
+              if (shouldPop && context.mounted) Navigator.pop(context);
             },
             child: const Text('Cancel'),
           ),

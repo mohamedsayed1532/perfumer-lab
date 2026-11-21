@@ -133,12 +133,12 @@ class LabUtilitiesScreen extends ConsumerWidget {
                         await LabHaptics.selection();
                         final count = await backupService.importDatabaseBackup();
                         if (context.mounted && count > 0) {
-                          await LabHaptics.batchSuccess();
                           _showInfoDialog(
                             context,
                             'Restore Completed',
                             'Successfully restored $count records into your laboratory database.',
                           );
+                          LabHaptics.batchSuccess();
                         }
                       },
                     ),
