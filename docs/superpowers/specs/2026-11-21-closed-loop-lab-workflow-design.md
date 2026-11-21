@@ -83,11 +83,30 @@ In `AppDatabase`:
 - Bump `schemaVersion` to `2`.
 - Provide `MigrationStrategy(onUpgrade: (m, from, to) async { if (from == 1) await m.createTable(inventoryLogs); })`.
 
-### 5.2 Formula Mod Duplication & Olfactory Balance
+### 5.2 Real-Time IFRA 51st Amendment Safety Engine (Priority Core)
+IFRA standards apply strictly to the **finished consumer product applied to skin (Category 4: Fine Fragrance)**, not merely the raw concentrate. The compliance engine calculates real skin exposure mathematically:
+
+$$\text{Active Chemical \% in Concentrate} = \left(\frac{\text{partsPerThousand}}{\text{totalPpt}}\right) \times \left(\frac{\text{specifiedDilutionPercent}}{100}\right) \times 100\%$$
+
+$$\text{Finished Product Skin Exposure \%} = \text{Active in Concentrate \%} \times \left(\frac{\text{targetConcentrationPercent}}{100}\right)$$
+
+#### Compliance Features:
+1. **Formula-Level IFRA Status Banner**:
+   - **Compliant (Green)**: All materials within IFRA 51st Amendment / Category 4 limits. Displays `"IFRA Category 4 Compliant (at 20% EdP)"`.
+   - **Breach / Non-Compliant (High-Contrast Red)**: Prominently displayed at the top of the formula screen: `"IFRA Violation: 1 Restricted Material Exceeds Limit"`.
+2. **Itemized Material Safety Cards**:
+   - For any restricted ingredient (e.g. Oakmoss, Hydroxycitronellal, Isoeugenol, Lyral, Benzyl Salicylate):
+     - Displays `Finished Product Exposure: X.XX%` vs `IFRA Max: Y.YY%`.
+     - Displays exact **Max Allowed PPT / Grams**: Computes the maximum amount allowed to regain 100% compliance without having to guess.
+3. **Bench Compounding Pre-Flight Safety Gate**:
+   - When entering the bench compounding mode, if any ingredient exceeds the IFRA limit, an alert sheet appears:
+     - Warning: `"This formula exceeds IFRA safety standards for Category 4 fine fragrance. Are you compounding for technical evaluation / blotter testing only?"`
+     - Allows proceeding only with explicit acknowledgement.
+
+### 5.3 Formula Mod Duplication & Olfactory Balance
 - **Action**: In `FormulaDetailScreen`, add a "Duplicate as Mod" action in the navigation bar/menu.
 - **Logic**: Reads current formula and formula items. Prompts user for name (defaults to `"<Name> Mod N"`). Clones header with bumped version and inserts duplicate `FormulaItems`.
 - **Olfactory Pyramid Bar**: A compact horizontal segmented bar showing Top (Yellow), Heart (Pink/Red), and Base (Purple) percentages dynamically recalculated from formula items.
-- **IFRA Safety Warning**: For each item, if `(partsPerThousand / totalPpt * 100) > idealMaxPercent`, render an amber warning tag `IFRA Alert: Exceeds X%`.
 
 ### 5.3 Bench Compounding Atomic Execution & Inventory Sync
 In `BenchCompoundingScreen`:
