@@ -114,7 +114,7 @@ class _FoDilutionCalculatorSheetState
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () => Navigator.pop(context),
-          child: const Text('Close'),
+          child: const Text('Cancel'),
         ),
       ),
       child: SafeArea(
@@ -274,9 +274,12 @@ class _FoDilutionCalculatorSheetState
                   children: [
                     Icon(CupertinoIcons.timer, size: 20),
                     SizedBox(width: 8),
-                    Text(
-                      'Compound & Start Maceration (30 Days)',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    Flexible(
+                      child: Text(
+                        'Start Maceration (30d)',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                 ),
