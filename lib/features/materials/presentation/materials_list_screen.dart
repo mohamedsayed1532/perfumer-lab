@@ -36,12 +36,16 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   showCupertinoModalPopup(
-                  context: context,
-                  builder: (ctx) => const CreateMaterialSheet(),
-                );
-              },
-              child: const Icon(CupertinoIcons.add, size: 26),
-            ),
+                    context: context,
+                    builder: (ctx) => const CreateMaterialSheet(),
+                  );
+                },
+                child: const Icon(
+                  CupertinoIcons.add,
+                  size: 26,
+                  color: CupertinoColors.activeBlue,
+                ),
+              ),
           ),
           SliverToBoxAdapter(
             child: Padding(

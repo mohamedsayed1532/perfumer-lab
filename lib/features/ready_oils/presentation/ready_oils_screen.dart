@@ -26,7 +26,11 @@ class ReadyOilsScreen extends ConsumerWidget {
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () => _openSheet(context),
-                child: const Icon(CupertinoIcons.add, size: 26),
+                child: const Icon(
+                  CupertinoIcons.add,
+                  size: 26,
+                  color: CupertinoColors.activeBlue,
+                ),
               ),
             ),
           readyOilsAsync.when(

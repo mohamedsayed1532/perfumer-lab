@@ -25,7 +25,11 @@ class FormulasListScreen extends ConsumerWidget {
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () => _openCreateFormula(context),
-                child: const Icon(CupertinoIcons.add, size: 26),
+                child: const Icon(
+                  CupertinoIcons.add,
+                  size: 26,
+                  color: CupertinoColors.activeBlue,
+                ),
               ),
             ),
             formulasAsync.when(
