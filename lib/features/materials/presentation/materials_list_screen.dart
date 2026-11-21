@@ -67,7 +67,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: CupertinoSearchTextField(
                 focusNode: _searchFocusNode,
-                placeholder: 'Search by material, CAS, botanical...',
+                placeholder: 'Search raw materials',
                 placeholderStyle: TextStyle(
                   color: AppColors.tertiaryLabel.resolveFrom(context),
                   fontSize: 14.5,
@@ -200,15 +200,16 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   }
 
   Widget _buildSegmentLabel(String text, bool isSelected) {
+    final isDark = CupertinoTheme.brightnessOf(context) == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 13,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           color: isSelected
-              ? CupertinoColors.white
+              ? (isDark ? const Color(0xFF14161E) : CupertinoColors.white)
               : AppColors.label.resolveFrom(context),
         ),
       ),
@@ -216,28 +217,29 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   }
 
   Widget _buildMaterialCard(BuildContext context, Material item) {
-    // Pyramid note identity — bespoke apothecary organ badge
     IconData noteIcon;
     Color noteColor;
-    String noteLabel;
+    String noteTitle;
     switch (item.pyramidNote.toLowerCase()) {
       case 'top':
         noteIcon = CupertinoIcons.sparkles;
-        noteColor = const Color(0xFFE5A93C); // Radiant champagne amber — volatile top note
-        noteLabel = 'TOP';
+        noteColor = const Color(0xFFE5A93C); // Radiant amber — volatile top
+        noteTitle = 'Top note';
         break;
       case 'heart':
         noteIcon = CupertinoIcons.heart_fill;
-        noteColor = const Color(0xFFD47355); // Velvet rose damask — accord heart
-        noteLabel = 'HEART';
+        noteColor = const Color(0xFFD47355); // Rose damask — accord heart
+        noteTitle = 'Heart note';
         break;
       case 'base':
       default:
         noteIcon = CupertinoIcons.shield_fill;
-        noteColor = const Color(0xFF8A3B3B); // Smoked resinous oud — grounding base
-        noteLabel = 'BASE';
+        noteColor = const Color(0xFFA67C52); // Resinous oud — grounding base
+        noteTitle = 'Base note';
         break;
     }
+
+    final solventName = item.defaultSolvent?.split(' ')[0] ?? 'Neat';
 
     return GestureDetector(
       onTap: () {
@@ -247,39 +249,23 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
         );
       },
       child: LiquidGlass(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: noteColor.withValues(alpha: 0.16),
-                borderRadius: BorderRadius.circular(12),
+                color: noteColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: noteColor.withValues(alpha: 0.35),
+                  color: noteColor.withValues(alpha: 0.28),
                   width: 0.75,
                 ),
               ),
               child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(noteIcon, size: 16, color: noteColor),
-                    const SizedBox(height: 1),
-                    Text(
-                      noteLabel,
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.4,
-                        color: noteColor,
-                        height: 1.0,
-                      ),
-                    ),
-                  ],
-                ),
+                child: Icon(noteIcon, size: 16, color: noteColor),
               ),
             ),
             const SizedBox(width: 14),
@@ -295,7 +281,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${item.dilutionPercent.toStringAsFixed(0)}% in ${item.defaultSolvent?.split(" ")[0] ?? "Neat"}',
+                    '$noteTitle • ${item.dilutionPercent.toStringAsFixed(0)}% in $solventName',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -307,9 +293,9 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 110),
+              constraints: const BoxConstraints(maxWidth: 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -324,30 +310,23 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                       fontFeatures: const [FontFeature.tabularFigures()],
                       color: item.stockGrams > 0
                           ? AppColors.label.resolveFrom(context)
-                          : CupertinoColors.systemRed,
+                          : AppColors.tertiaryLabel.resolveFrom(context),
                     ),
                   ),
                   const SizedBox(height: 3),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 5, vertical: 1.5),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondarySystemGroupedBackground
-                          .resolveFrom(context),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      item.casNumber != null && item.casNumber!.isNotEmpty
-                          ? item.casNumber!
-                          : 'No CAS',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.2,
-                        color: AppColors.tertiaryLabel.resolveFrom(context),
-                      ),
+                  Text(
+                    item.casNumber != null && item.casNumber!.isNotEmpty
+                        ? item.casNumber!
+                        : '—',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0.2,
+                      fontFamily: 'monospace',
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: AppColors.tertiaryLabel.resolveFrom(context),
                     ),
                   ),
                 ],
