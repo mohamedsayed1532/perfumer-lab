@@ -14,11 +14,20 @@ class AppColors {
       CupertinoColors.tertiarySystemBackground;
 
   static const CupertinoDynamicColor systemGroupedBackground =
-      CupertinoColors.systemGroupedBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFF2F2F7), // Apple HIG grouped background (light)
+    darkColor: Color(0xFF0D0E17), // Deep midnight to match LiquidGlassBackground
+  );
   static const CupertinoDynamicColor secondarySystemGroupedBackground =
-      CupertinoColors.secondarySystemGroupedBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFFFFFFF), // Apple HIG secondary grouped (light)
+    darkColor: Color(0xFF1A1C29), // Elevated midnight card surface
+  );
   static const CupertinoDynamicColor tertiarySystemGroupedBackground =
-      CupertinoColors.tertiarySystemGroupedBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFF2F2F7),
+    darkColor: Color(0xFF222538), // Tertiary card surface
+  );
 
   // Text / Label hierarchy
   static const CupertinoDynamicColor label = CupertinoColors.label;

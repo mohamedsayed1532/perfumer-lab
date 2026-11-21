@@ -53,7 +53,16 @@ class _SolventDensitySheetState extends State<SolventDensitySheet> {
     return Container(
       height: MediaQuery.sizeOf(context).height * 0.75,
       decoration: BoxDecoration(
-        color: AppColors.systemGroupedBackground.resolveFrom(context),
+        gradient: CupertinoTheme.brightnessOf(context) == Brightness.dark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF16152B), Color(0xFF0D0E17)],
+              )
+            : null,
+        color: CupertinoTheme.brightnessOf(context) == Brightness.dark
+            ? null
+            : AppColors.systemGroupedBackground.resolveFrom(context),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -184,13 +193,16 @@ class _SolventDensitySheetState extends State<SolventDensitySheet> {
                         controller: _amountController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.label.resolveFrom(context),
+                        ),
                         decoration: BoxDecoration(
-                          color: CupertinoTheme.brightnessOf(context) == Brightness.dark
-                              ? const Color(0x38FFFFFF)
-                              : const Color(0xF0FFFFFF),
+                          color: AppColors.secondarySystemGroupedBackground.resolveFrom(context),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: AppColors.separator.resolveFrom(context).withValues(alpha: 0.3),
+                            color: AppColors.separator.resolveFrom(context),
                             width: 0.5,
                           ),
                         ),
