@@ -5354,6 +5354,491 @@ class AgingEvaluationsCompanion extends UpdateCompanion<AgingEvaluation> {
   }
 }
 
+class $InventoryLogsTable extends InventoryLogs
+    with TableInfo<$InventoryLogsTable, InventoryLog> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InventoryLogsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _materialIdMeta = const VerificationMeta(
+    'materialId',
+  );
+  @override
+  late final GeneratedColumn<String> materialId = GeneratedColumn<String>(
+    'material_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES materials (id)',
+    ),
+  );
+  static const VerificationMeta _deltaGramsMeta = const VerificationMeta(
+    'deltaGrams',
+  );
+  @override
+  late final GeneratedColumn<double> deltaGrams = GeneratedColumn<double>(
+    'delta_grams',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _remainingStockGramsMeta =
+      const VerificationMeta('remainingStockGrams');
+  @override
+  late final GeneratedColumn<double> remainingStockGrams =
+      GeneratedColumn<double>(
+        'remaining_stock_grams',
+        aliasedName,
+        false,
+        type: DriftSqlType.double,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _referenceBatchIdMeta = const VerificationMeta(
+    'referenceBatchId',
+  );
+  @override
+  late final GeneratedColumn<String> referenceBatchId = GeneratedColumn<String>(
+    'reference_batch_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    materialId,
+    deltaGrams,
+    remainingStockGrams,
+    reason,
+    referenceBatchId,
+    timestamp,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'inventory_logs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<InventoryLog> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('material_id')) {
+      context.handle(
+        _materialIdMeta,
+        materialId.isAcceptableOrUnknown(data['material_id']!, _materialIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_materialIdMeta);
+    }
+    if (data.containsKey('delta_grams')) {
+      context.handle(
+        _deltaGramsMeta,
+        deltaGrams.isAcceptableOrUnknown(data['delta_grams']!, _deltaGramsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deltaGramsMeta);
+    }
+    if (data.containsKey('remaining_stock_grams')) {
+      context.handle(
+        _remainingStockGramsMeta,
+        remainingStockGrams.isAcceptableOrUnknown(
+          data['remaining_stock_grams']!,
+          _remainingStockGramsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_remainingStockGramsMeta);
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reasonMeta);
+    }
+    if (data.containsKey('reference_batch_id')) {
+      context.handle(
+        _referenceBatchIdMeta,
+        referenceBatchId.isAcceptableOrUnknown(
+          data['reference_batch_id']!,
+          _referenceBatchIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  InventoryLog map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InventoryLog(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      materialId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}material_id'],
+      )!,
+      deltaGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}delta_grams'],
+      )!,
+      remainingStockGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}remaining_stock_grams'],
+      )!,
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      )!,
+      referenceBatchId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reference_batch_id'],
+      ),
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+    );
+  }
+
+  @override
+  $InventoryLogsTable createAlias(String alias) {
+    return $InventoryLogsTable(attachedDatabase, alias);
+  }
+}
+
+class InventoryLog extends DataClass implements Insertable<InventoryLog> {
+  final String id;
+  final String materialId;
+  final double deltaGrams;
+  final double remainingStockGrams;
+  final String reason;
+  final String? referenceBatchId;
+  final DateTime timestamp;
+  const InventoryLog({
+    required this.id,
+    required this.materialId,
+    required this.deltaGrams,
+    required this.remainingStockGrams,
+    required this.reason,
+    this.referenceBatchId,
+    required this.timestamp,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['material_id'] = Variable<String>(materialId);
+    map['delta_grams'] = Variable<double>(deltaGrams);
+    map['remaining_stock_grams'] = Variable<double>(remainingStockGrams);
+    map['reason'] = Variable<String>(reason);
+    if (!nullToAbsent || referenceBatchId != null) {
+      map['reference_batch_id'] = Variable<String>(referenceBatchId);
+    }
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    return map;
+  }
+
+  InventoryLogsCompanion toCompanion(bool nullToAbsent) {
+    return InventoryLogsCompanion(
+      id: Value(id),
+      materialId: Value(materialId),
+      deltaGrams: Value(deltaGrams),
+      remainingStockGrams: Value(remainingStockGrams),
+      reason: Value(reason),
+      referenceBatchId: referenceBatchId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceBatchId),
+      timestamp: Value(timestamp),
+    );
+  }
+
+  factory InventoryLog.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InventoryLog(
+      id: serializer.fromJson<String>(json['id']),
+      materialId: serializer.fromJson<String>(json['materialId']),
+      deltaGrams: serializer.fromJson<double>(json['deltaGrams']),
+      remainingStockGrams: serializer.fromJson<double>(
+        json['remainingStockGrams'],
+      ),
+      reason: serializer.fromJson<String>(json['reason']),
+      referenceBatchId: serializer.fromJson<String?>(json['referenceBatchId']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'materialId': serializer.toJson<String>(materialId),
+      'deltaGrams': serializer.toJson<double>(deltaGrams),
+      'remainingStockGrams': serializer.toJson<double>(remainingStockGrams),
+      'reason': serializer.toJson<String>(reason),
+      'referenceBatchId': serializer.toJson<String?>(referenceBatchId),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+    };
+  }
+
+  InventoryLog copyWith({
+    String? id,
+    String? materialId,
+    double? deltaGrams,
+    double? remainingStockGrams,
+    String? reason,
+    Value<String?> referenceBatchId = const Value.absent(),
+    DateTime? timestamp,
+  }) => InventoryLog(
+    id: id ?? this.id,
+    materialId: materialId ?? this.materialId,
+    deltaGrams: deltaGrams ?? this.deltaGrams,
+    remainingStockGrams: remainingStockGrams ?? this.remainingStockGrams,
+    reason: reason ?? this.reason,
+    referenceBatchId: referenceBatchId.present
+        ? referenceBatchId.value
+        : this.referenceBatchId,
+    timestamp: timestamp ?? this.timestamp,
+  );
+  InventoryLog copyWithCompanion(InventoryLogsCompanion data) {
+    return InventoryLog(
+      id: data.id.present ? data.id.value : this.id,
+      materialId: data.materialId.present
+          ? data.materialId.value
+          : this.materialId,
+      deltaGrams: data.deltaGrams.present
+          ? data.deltaGrams.value
+          : this.deltaGrams,
+      remainingStockGrams: data.remainingStockGrams.present
+          ? data.remainingStockGrams.value
+          : this.remainingStockGrams,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      referenceBatchId: data.referenceBatchId.present
+          ? data.referenceBatchId.value
+          : this.referenceBatchId,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoryLog(')
+          ..write('id: $id, ')
+          ..write('materialId: $materialId, ')
+          ..write('deltaGrams: $deltaGrams, ')
+          ..write('remainingStockGrams: $remainingStockGrams, ')
+          ..write('reason: $reason, ')
+          ..write('referenceBatchId: $referenceBatchId, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    materialId,
+    deltaGrams,
+    remainingStockGrams,
+    reason,
+    referenceBatchId,
+    timestamp,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InventoryLog &&
+          other.id == this.id &&
+          other.materialId == this.materialId &&
+          other.deltaGrams == this.deltaGrams &&
+          other.remainingStockGrams == this.remainingStockGrams &&
+          other.reason == this.reason &&
+          other.referenceBatchId == this.referenceBatchId &&
+          other.timestamp == this.timestamp);
+}
+
+class InventoryLogsCompanion extends UpdateCompanion<InventoryLog> {
+  final Value<String> id;
+  final Value<String> materialId;
+  final Value<double> deltaGrams;
+  final Value<double> remainingStockGrams;
+  final Value<String> reason;
+  final Value<String?> referenceBatchId;
+  final Value<DateTime> timestamp;
+  final Value<int> rowid;
+  const InventoryLogsCompanion({
+    this.id = const Value.absent(),
+    this.materialId = const Value.absent(),
+    this.deltaGrams = const Value.absent(),
+    this.remainingStockGrams = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.referenceBatchId = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  InventoryLogsCompanion.insert({
+    required String id,
+    required String materialId,
+    required double deltaGrams,
+    required double remainingStockGrams,
+    required String reason,
+    this.referenceBatchId = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       materialId = Value(materialId),
+       deltaGrams = Value(deltaGrams),
+       remainingStockGrams = Value(remainingStockGrams),
+       reason = Value(reason);
+  static Insertable<InventoryLog> custom({
+    Expression<String>? id,
+    Expression<String>? materialId,
+    Expression<double>? deltaGrams,
+    Expression<double>? remainingStockGrams,
+    Expression<String>? reason,
+    Expression<String>? referenceBatchId,
+    Expression<DateTime>? timestamp,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (materialId != null) 'material_id': materialId,
+      if (deltaGrams != null) 'delta_grams': deltaGrams,
+      if (remainingStockGrams != null)
+        'remaining_stock_grams': remainingStockGrams,
+      if (reason != null) 'reason': reason,
+      if (referenceBatchId != null) 'reference_batch_id': referenceBatchId,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  InventoryLogsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? materialId,
+    Value<double>? deltaGrams,
+    Value<double>? remainingStockGrams,
+    Value<String>? reason,
+    Value<String?>? referenceBatchId,
+    Value<DateTime>? timestamp,
+    Value<int>? rowid,
+  }) {
+    return InventoryLogsCompanion(
+      id: id ?? this.id,
+      materialId: materialId ?? this.materialId,
+      deltaGrams: deltaGrams ?? this.deltaGrams,
+      remainingStockGrams: remainingStockGrams ?? this.remainingStockGrams,
+      reason: reason ?? this.reason,
+      referenceBatchId: referenceBatchId ?? this.referenceBatchId,
+      timestamp: timestamp ?? this.timestamp,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (materialId.present) {
+      map['material_id'] = Variable<String>(materialId.value);
+    }
+    if (deltaGrams.present) {
+      map['delta_grams'] = Variable<double>(deltaGrams.value);
+    }
+    if (remainingStockGrams.present) {
+      map['remaining_stock_grams'] = Variable<double>(
+        remainingStockGrams.value,
+      );
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (referenceBatchId.present) {
+      map['reference_batch_id'] = Variable<String>(referenceBatchId.value);
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InventoryLogsCompanion(')
+          ..write('id: $id, ')
+          ..write('materialId: $materialId, ')
+          ..write('deltaGrams: $deltaGrams, ')
+          ..write('remainingStockGrams: $remainingStockGrams, ')
+          ..write('reason: $reason, ')
+          ..write('referenceBatchId: $referenceBatchId, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5365,6 +5850,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AgingEvaluationsTable agingEvaluations = $AgingEvaluationsTable(
     this,
   );
+  late final $InventoryLogsTable inventoryLogs = $InventoryLogsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5376,6 +5862,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     formulaItems,
     agingBatches,
     agingEvaluations,
+    inventoryLogs,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -5502,6 +5989,24 @@ final class $$MaterialsTableReferences
     ).filter((f) => f.materialId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_formulaItemsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$InventoryLogsTable, List<InventoryLog>>
+  _inventoryLogsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.inventoryLogs,
+    aliasName: 'materials__id__inventory_logs__material_id',
+  );
+
+  $$InventoryLogsTableProcessedTableManager get inventoryLogsRefs {
+    final manager = $$InventoryLogsTableTableManager(
+      $_db,
+      $_db.inventoryLogs,
+    ).filter((f) => f.materialId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_inventoryLogsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -5738,6 +6243,31 @@ class $$MaterialsTableFilterComposer
           }) => $$FormulaItemsTableFilterComposer(
             $db: $db,
             $table: $db.formulaItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> inventoryLogsRefs(
+    Expression<bool> Function($$InventoryLogsTableFilterComposer f) f,
+  ) {
+    final $$InventoryLogsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.inventoryLogs,
+      getReferencedColumn: (t) => t.materialId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InventoryLogsTableFilterComposer(
+            $db: $db,
+            $table: $db.inventoryLogs,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -6167,6 +6697,31 @@ class $$MaterialsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> inventoryLogsRefs<T extends Object>(
+    Expression<T> Function($$InventoryLogsTableAnnotationComposer a) f,
+  ) {
+    final $$InventoryLogsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.inventoryLogs,
+      getReferencedColumn: (t) => t.materialId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InventoryLogsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.inventoryLogs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MaterialsTableTableManager
@@ -6182,7 +6737,10 @@ class $$MaterialsTableTableManager
           $$MaterialsTableUpdateCompanionBuilder,
           (Material, $$MaterialsTableReferences),
           Material,
-          PrefetchHooks Function({bool formulaItemsRefs})
+          PrefetchHooks Function({
+            bool formulaItemsRefs,
+            bool inventoryLogsRefs,
+          })
         > {
   $$MaterialsTableTableManager(_$AppDatabase db, $MaterialsTable table)
     : super(
@@ -6379,37 +6937,61 @@ class $$MaterialsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({formulaItemsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (formulaItemsRefs) db.formulaItems],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (formulaItemsRefs)
-                    await $_getPrefetchedDataByColumns<
-                      Material,
-                      $MaterialsTable,
-                      FormulaItem,
-                      $FormulaItemsTable
-                    >(
-                      currentTable: table,
-                      referencedTable: $$MaterialsTableReferences
-                          ._formulaItemsRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$MaterialsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).formulaItemsRefs,
-                      currentColumn: 'id',
-                      referencedColumn: 'material_id',
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({formulaItemsRefs = false, inventoryLogsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (formulaItemsRefs) db.formulaItems,
+                    if (inventoryLogsRefs) db.inventoryLogs,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (formulaItemsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Material,
+                          $MaterialsTable,
+                          FormulaItem,
+                          $FormulaItemsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaterialsTableReferences
+                              ._formulaItemsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaterialsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).formulaItemsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'material_id',
+                          typedResults: items,
+                        ),
+                      if (inventoryLogsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Material,
+                          $MaterialsTable,
+                          InventoryLog,
+                          $InventoryLogsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MaterialsTableReferences
+                              ._inventoryLogsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MaterialsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).inventoryLogsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'material_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -6426,7 +7008,7 @@ typedef $$MaterialsTableProcessedTableManager =
       $$MaterialsTableUpdateCompanionBuilder,
       (Material, $$MaterialsTableReferences),
       Material,
-      PrefetchHooks Function({bool formulaItemsRefs})
+      PrefetchHooks Function({bool formulaItemsRefs, bool inventoryLogsRefs})
     >;
 typedef $$ReadyOilsTableCreateCompanionBuilder = ReadyOilsCompanion Function({
   required String id,
@@ -8455,6 +9037,369 @@ typedef $$AgingEvaluationsTableProcessedTableManager =
       AgingEvaluation,
       PrefetchHooks Function({bool batchId})
     >;
+typedef $$InventoryLogsTableCreateCompanionBuilder =
+    InventoryLogsCompanion Function({
+      required String id,
+      required String materialId,
+      required double deltaGrams,
+      required double remainingStockGrams,
+      required String reason,
+      Value<String?> referenceBatchId,
+      Value<DateTime> timestamp,
+      Value<int> rowid,
+    });
+typedef $$InventoryLogsTableUpdateCompanionBuilder =
+    InventoryLogsCompanion Function({
+      Value<String> id,
+      Value<String> materialId,
+      Value<double> deltaGrams,
+      Value<double> remainingStockGrams,
+      Value<String> reason,
+      Value<String?> referenceBatchId,
+      Value<DateTime> timestamp,
+      Value<int> rowid,
+    });
+
+final class $$InventoryLogsTableReferences
+    extends BaseReferences<_$AppDatabase, $InventoryLogsTable, InventoryLog> {
+  $$InventoryLogsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MaterialsTable _materialIdTable(_$AppDatabase db) =>
+      db.materials.createAlias('inventory_logs__material_id__materials__id');
+
+  $$MaterialsTableProcessedTableManager get materialId {
+    final $_column = $_itemColumn<String>('material_id')!;
+
+    final manager = $$MaterialsTableTableManager(
+      $_db,
+      $_db.materials,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_materialIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$InventoryLogsTableFilterComposer
+    extends Composer<_$AppDatabase, $InventoryLogsTable> {
+  $$InventoryLogsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get deltaGrams => $composableBuilder(
+    column: $table.deltaGrams,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get remainingStockGrams => $composableBuilder(
+    column: $table.remainingStockGrams,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get referenceBatchId => $composableBuilder(
+    column: $table.referenceBatchId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MaterialsTableFilterComposer get materialId {
+    final $$MaterialsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.materialId,
+      referencedTable: $db.materials,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaterialsTableFilterComposer(
+            $db: $db,
+            $table: $db.materials,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InventoryLogsTableOrderingComposer
+    extends Composer<_$AppDatabase, $InventoryLogsTable> {
+  $$InventoryLogsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get deltaGrams => $composableBuilder(
+    column: $table.deltaGrams,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get remainingStockGrams => $composableBuilder(
+    column: $table.remainingStockGrams,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get referenceBatchId => $composableBuilder(
+    column: $table.referenceBatchId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MaterialsTableOrderingComposer get materialId {
+    final $$MaterialsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.materialId,
+      referencedTable: $db.materials,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaterialsTableOrderingComposer(
+            $db: $db,
+            $table: $db.materials,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InventoryLogsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $InventoryLogsTable> {
+  $$InventoryLogsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get deltaGrams => $composableBuilder(
+    column: $table.deltaGrams,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get remainingStockGrams => $composableBuilder(
+    column: $table.remainingStockGrams,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get referenceBatchId => $composableBuilder(
+    column: $table.referenceBatchId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+
+  $$MaterialsTableAnnotationComposer get materialId {
+    final $$MaterialsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.materialId,
+      referencedTable: $db.materials,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MaterialsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.materials,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InventoryLogsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $InventoryLogsTable,
+          InventoryLog,
+          $$InventoryLogsTableFilterComposer,
+          $$InventoryLogsTableOrderingComposer,
+          $$InventoryLogsTableAnnotationComposer,
+          $$InventoryLogsTableCreateCompanionBuilder,
+          $$InventoryLogsTableUpdateCompanionBuilder,
+          (InventoryLog, $$InventoryLogsTableReferences),
+          InventoryLog,
+          PrefetchHooks Function({bool materialId})
+        > {
+  $$InventoryLogsTableTableManager(_$AppDatabase db, $InventoryLogsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InventoryLogsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InventoryLogsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$InventoryLogsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> materialId = const Value.absent(),
+                Value<double> deltaGrams = const Value.absent(),
+                Value<double> remainingStockGrams = const Value.absent(),
+                Value<String> reason = const Value.absent(),
+                Value<String?> referenceBatchId = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => InventoryLogsCompanion(
+                id: id,
+                materialId: materialId,
+                deltaGrams: deltaGrams,
+                remainingStockGrams: remainingStockGrams,
+                reason: reason,
+                referenceBatchId: referenceBatchId,
+                timestamp: timestamp,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String materialId,
+                required double deltaGrams,
+                required double remainingStockGrams,
+                required String reason,
+                Value<String?> referenceBatchId = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => InventoryLogsCompanion.insert(
+                id: id,
+                materialId: materialId,
+                deltaGrams: deltaGrams,
+                remainingStockGrams: remainingStockGrams,
+                reason: reason,
+                referenceBatchId: referenceBatchId,
+                timestamp: timestamp,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$InventoryLogsTable, InventoryLog>(table),
+                  $$InventoryLogsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({materialId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (materialId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.materialId,
+                        referencedTable: $$InventoryLogsTableReferences
+                            ._materialIdTable(db),
+                        referencedColumn: $$InventoryLogsTableReferences
+                            ._materialIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$InventoryLogsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $InventoryLogsTable,
+      InventoryLog,
+      $$InventoryLogsTableFilterComposer,
+      $$InventoryLogsTableOrderingComposer,
+      $$InventoryLogsTableAnnotationComposer,
+      $$InventoryLogsTableCreateCompanionBuilder,
+      $$InventoryLogsTableUpdateCompanionBuilder,
+      (InventoryLog, $$InventoryLogsTableReferences),
+      InventoryLog,
+      PrefetchHooks Function({bool materialId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8471,4 +9416,6 @@ class $AppDatabaseManager {
       $$AgingBatchesTableTableManager(_db, _db.agingBatches);
   $$AgingEvaluationsTableTableManager get agingEvaluations =>
       $$AgingEvaluationsTableTableManager(_db, _db.agingEvaluations);
+  $$InventoryLogsTableTableManager get inventoryLogs =>
+      $$InventoryLogsTableTableManager(_db, _db.inventoryLogs);
 }
