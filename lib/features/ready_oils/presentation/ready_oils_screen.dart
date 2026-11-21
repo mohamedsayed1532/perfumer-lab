@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
+import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/ready_oils_repository.dart';
 import 'fo_dilution_calculator_sheet.dart';
 import 'create_or_edit_ready_oil_sheet.dart';
@@ -14,18 +15,20 @@ class ReadyOilsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final readyOilsAsync = ref.watch(readyOilsStreamProvider);
 
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      child: CustomScrollView(
-        slivers: [
-          CupertinoSliverNavigationBar(
-            largeTitle: const Text('Ready Fragrance Oils'),
-            trailing: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () => _openSheet(context),
-              child: const Icon(CupertinoIcons.add, size: 26),
+    return LiquidGlassBackground(
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.transparent,
+        child: CustomScrollView(
+          slivers: [
+            CupertinoSliverNavigationBar(
+              backgroundColor: AppColors.liquidGlassBg.resolveFrom(context),
+              largeTitle: const Text('Ready Fragrance Oils'),
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => _openSheet(context),
+                child: const Icon(CupertinoIcons.add, size: 26),
+              ),
             ),
-          ),
           readyOilsAsync.when(
             data: (oils) {
               if (oils.isEmpty) {
@@ -89,19 +92,9 @@ class ReadyOilsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: GestureDetector(
                           onTap: () => _openSheet(context, existing: oil),
-                          child: Container(
+                          child: LiquidGlass(
                             padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppColors.secondarySystemGroupedBackground
-                                  .resolveFrom(context),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: AppColors.separator
-                                    .resolveFrom(context)
-                                    .withValues(alpha: 0.2),
-                                width: 0.5,
-                              ),
-                            ),
+                            borderRadius: BorderRadius.circular(18),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -229,6 +222,7 @@ class ReadyOilsScreen extends ConsumerWidget {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+       ),
       ),
     );
   }

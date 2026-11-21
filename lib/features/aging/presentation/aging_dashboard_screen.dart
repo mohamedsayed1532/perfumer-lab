@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
+import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/aging_repository.dart';
 import 'add_evaluation_sheet.dart';
 import 'edit_aging_batch_sheet.dart';
@@ -22,13 +23,15 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
   Widget build(BuildContext context) {
     final batchesAsync = ref.watch(activeAgingBatchesStreamProvider);
 
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      child: CustomScrollView(
-        slivers: [
-          const CupertinoSliverNavigationBar(
-            largeTitle: Text('Aging & Batches'),
-          ),
+    return LiquidGlassBackground(
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.transparent,
+        child: CustomScrollView(
+          slivers: [
+            CupertinoSliverNavigationBar(
+              backgroundColor: AppColors.liquidGlassBg.resolveFrom(context),
+              largeTitle: const Text('Aging & Batches'),
+            ),
           SliverToBoxAdapter(
             child: Padding(
               padding:
@@ -110,8 +113,9 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
               child: Center(child: Text('Error: $err')),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
-        ],
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          ],
+        ),
       ),
     );
   }
@@ -141,19 +145,9 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
 
     return GestureDetector(
       onTap: () => _openEditSheet(context, batch),
-      child: Container(
+      child: LiquidGlass(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color:
-              AppColors.secondarySystemGroupedBackground.resolveFrom(context),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.separator
-                .resolveFrom(context)
-                .withValues(alpha: 0.2),
-            width: 0.5,
-          ),
-        ),
+        borderRadius: BorderRadius.circular(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

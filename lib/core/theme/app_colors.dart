@@ -53,13 +53,13 @@ class AppColors {
   // Liquid Glass base colors
   static const CupertinoDynamicColor liquidGlassBg =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xCCF2F2F7), // 80% opacity light glass
-    darkColor: Color(0xB31C1C1E), // 70% opacity dark glass
+    color: Color(0xD9FFFFFF), // 85% translucent white frosted glass
+    darkColor: Color(0x80161824), // 50% translucent deep midnight glass
   );
 
   static const CupertinoDynamicColor liquidGlassBorder =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0x33FFFFFF), // Specular light highlight
-    darkColor: Color(0x26FFFFFF), // Subtle specular dark highlight
+    color: Color(0x4DFFFFFF), // 30% specular light highlight
+    darkColor: Color(0x38FFFFFF), // 22% specular dark highlight
   );
 }

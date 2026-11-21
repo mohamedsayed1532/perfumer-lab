@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
+import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import '../data/materials_repository.dart';
 import 'create_material_sheet.dart';
 import 'material_detail_sheet.dart';
@@ -23,16 +24,18 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   Widget build(BuildContext context) {
     final materialsAsync = ref.watch(materialsStreamProvider);
 
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      child: CustomScrollView(
-        slivers: [
-          CupertinoSliverNavigationBar(
-            largeTitle: const Text('Raw Materials'),
-            trailing: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                showCupertinoModalPopup(
+    return LiquidGlassBackground(
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.transparent,
+        child: CustomScrollView(
+          slivers: [
+            CupertinoSliverNavigationBar(
+              backgroundColor: AppColors.liquidGlassBg.resolveFrom(context),
+              largeTitle: const Text('Raw Materials'),
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  showCupertinoModalPopup(
                   context: context,
                   builder: (ctx) => const CreateMaterialSheet(),
                 );
@@ -148,6 +151,7 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+       ),
       ),
     );
   }
@@ -199,19 +203,9 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
           builder: (ctx) => MaterialDetailSheet(material: item),
         );
       },
-      child: Container(
+      child: LiquidGlass(
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color:
-              AppColors.secondarySystemGroupedBackground.resolveFrom(context),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.separator
-                .resolveFrom(context)
-                .withValues(alpha: 0.2),
-            width: 0.5,
-          ),
-        ),
+        borderRadius: BorderRadius.circular(18),
         child: Row(
           children: [
             Container(

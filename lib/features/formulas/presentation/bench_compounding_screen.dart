@@ -38,11 +38,13 @@ class _BenchCompoundingScreenState
         ? (totalAddedSoFar / _targetBatchGrams).clamp(0.0, 1.0)
         : 0.0;
 
-    return CupertinoPageScaffold(
-      backgroundColor: AppColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Compounding: ${formula.name}',
-            style: AppTypography.headline(context)),
+    return LiquidGlassBackground(
+      child: CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.transparent,
+        navigationBar: CupertinoNavigationBar(
+          backgroundColor: AppColors.liquidGlassBg.resolveFrom(context),
+          middle: Text('Compounding: ${formula.name}',
+              style: AppTypography.headline(context)),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _showTargetBatchDialog,
@@ -295,6 +297,7 @@ class _BenchCompoundingScreenState
           ],
         ),
       ),
+     ),
     );
   }
 
