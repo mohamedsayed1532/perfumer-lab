@@ -4,6 +4,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
+import 'package:perfumery_lab/core/services/ifra_catalog_service.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
 import 'package:perfumery_lab/core/utils/haptics.dart';
@@ -303,6 +304,8 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                         const TextInputType.numberWithOptions(decimal: true),
                     placeholder: 'e.g. 21.4%'),
                 _buildDivider(),
+                _buildIfraLookupRow(),
+                _buildDivider(),
                 _buildIntensitySlider(),
               ]),
               const SizedBox(height: 24),
@@ -557,6 +560,78 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildIfraLookupRow() {
+    final catalog = ref.watch(ifraCatalogProvider).value;
+    final match = catalog?.findStandardForMaterial(
+      casNumber: _casController.text,
+      name: _nameController.text,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'IFRA 51st Database Match',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.secondaryLabel.resolveFrom(context),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  match == null
+                      ? 'Type name or CAS to auto-match 263 standards'
+                      : '${match.name} · Cat 4: ${match.displayLimitFor('Cat 4')}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: match == null
+                        ? AppColors.tertiaryLabel.resolveFrom(context)
+                        : (match.type == 'PROHIBITION'
+                            ? CupertinoColors.systemRed
+                            : AppColors.naturalGreen.resolveFrom(context)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (match != null && match.numericLimitFor('Cat 4') != null)
+            CupertinoButton(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              minimumSize: Size.zero,
+              color: AppColors.accent.resolveFrom(context),
+              borderRadius: BorderRadius.circular(8),
+              onPressed: () {
+                final limit = match.numericLimitFor('Cat 4');
+                if (limit != null) {
+                  _markDirty();
+                  setState(() {
+                    _idealMaxController.text = limit.toString();
+                  });
+                }
+              },
+              child: Text(
+                'Apply',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.onAccent(context),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

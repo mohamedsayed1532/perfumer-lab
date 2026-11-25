@@ -5,6 +5,7 @@ class FormulaItemSafetyInput {
   final double partsPerThousand;
   final double specifiedDilutionPercent;
   final double? idealMaxPercent;
+  final bool isProhibited;
 
   const FormulaItemSafetyInput({
     required this.id,
@@ -12,6 +13,7 @@ class FormulaItemSafetyInput {
     required this.partsPerThousand,
     this.specifiedDilutionPercent = 100.0,
     this.idealMaxPercent,
+    this.isProhibited = false,
   });
 }
 
@@ -21,6 +23,7 @@ class IfraViolationItem {
   final double currentSkinExposurePercent;
   final double maxAllowedSkinExposurePercent;
   final double maxAllowedPpt;
+  final bool isProhibited;
 
   const IfraViolationItem({
     required this.id,
@@ -28,6 +31,7 @@ class IfraViolationItem {
     required this.currentSkinExposurePercent,
     required this.maxAllowedSkinExposurePercent,
     required this.maxAllowedPpt,
+    this.isProhibited = false,
   });
 }
 
@@ -107,15 +111,29 @@ class IfraSafetyService {
     final violations = <IfraViolationItem>[];
 
     for (final item in items) {
-      final maxLimit = item.idealMaxPercent;
-      if (maxLimit == null || maxLimit <= 0) continue;
-
       final skinExposure = calculateSkinExposure(
         partsPerThousand: item.partsPerThousand,
         totalPpt: effectiveTotalPpt,
         specifiedDilutionPercent: item.specifiedDilutionPercent,
         targetConcentrationPercent: targetConcentrationPercent,
       );
+
+      if (item.isProhibited && item.partsPerThousand > 0) {
+        violations.add(
+          IfraViolationItem(
+            id: item.id,
+            name: item.name,
+            currentSkinExposurePercent: skinExposure,
+            maxAllowedSkinExposurePercent: 0.0,
+            maxAllowedPpt: 0.0,
+            isProhibited: true,
+          ),
+        );
+        continue;
+      }
+
+      final maxLimit = item.idealMaxPercent;
+      if (maxLimit == null || maxLimit <= 0) continue;
 
       // Check if skin exposure exceeds threshold (with 0.0001 precision margin)
       if (skinExposure > (maxLimit + 0.00001)) {

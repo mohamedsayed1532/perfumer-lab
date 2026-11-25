@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
+import 'package:perfumery_lab/core/services/ifra_catalog_service.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
 import 'package:perfumery_lab/core/utils/haptics.dart';
+import 'package:perfumery_lab/features/utilities/presentation/ifra_reference_sheet.dart';
 import '../data/materials_repository.dart';
 import 'create_material_sheet.dart';
 
@@ -319,6 +321,9 @@ class MaterialDetailSheet extends ConsumerWidget {
               const SizedBox(height: 24),
             ],
 
+            // IFRA 51st Amendment Auto-Resolved Profile
+            ..._buildIfraProfileSection(context, ref),
+
             // Actions: Edit and Delete
             CupertinoButton(
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -375,6 +380,115 @@ class MaterialDetailSheet extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildIfraProfileSection(BuildContext context, WidgetRef ref) {
+    final catalog = ref.watch(ifraCatalogProvider).value;
+    if (catalog == null) return const [];
+
+    final std = catalog.findStandardForMaterial(
+      casNumber: material.casNumber,
+      name: material.name,
+    );
+    final ncs = catalog.findNcsForMaterial(
+      casNumber: material.casNumber,
+      name: material.name,
+    );
+
+    if (std == null && ncs == null) return const [];
+
+    return [
+      _buildSectionHeader(context, 'IFRA 51ST AMENDMENT PROFILE'),
+      if (std != null)
+        GestureDetector(
+          onTap: () {
+            showCupertinoModalPopup(
+              context: context,
+              builder: (_) => IfraStandardDetailSheet(standard: std),
+            );
+          },
+          child: _buildGroupedCard(context, [
+            _buildDetailRow(
+              context,
+              'Standard (${std.key})',
+              'Amdt ${std.amendment} · ${std.type.replaceAll('_', ' / ')}',
+              valueColor: std.type == 'PROHIBITION'
+                  ? CupertinoColors.systemRed
+                  : AppColors.accentInk.resolveFrom(context),
+              isBold: true,
+            ),
+            _buildDivider(context),
+            _buildDetailRow(
+              context,
+              'Cat 4 (Fine Fragrance)',
+              std.displayLimitFor('Cat 4'),
+              valueColor: std.type == 'PROHIBITION'
+                  ? CupertinoColors.systemRed
+                  : AppColors.naturalGreen.resolveFrom(context),
+              isBold: true,
+            ),
+            _buildDivider(context),
+            _buildDetailRow(
+              context,
+              'Cat 5A · Cat 9 · Cat 12',
+              '${std.displayLimitFor('Cat 5A')} · ${std.displayLimitFor('Cat 9')} · ${std.displayLimitFor('Cat 12')}',
+            ),
+            if (std.endpoint.isNotEmpty) ...[
+              _buildDivider(context),
+              _buildDetailRow(context, 'Risk Endpoint', std.endpoint),
+            ],
+            _buildDivider(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'View all 18 IFRA categories & notes',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.accent.resolveFrom(context),
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.chevron_forward,
+                    size: 14,
+                    color: AppColors.accent.resolveFrom(context),
+                  ),
+                ],
+              ),
+            ),
+          ]),
+        ),
+      if (ncs != null) ...[
+        if (std != null) const SizedBox(height: 12),
+        GestureDetector(
+          onTap: () {
+            showCupertinoModalPopup(
+              context: context,
+              builder: (_) => IfraNcsDetailSheet(ncs: ncs),
+            );
+          },
+          child: _buildGroupedCard(context, [
+            _buildDetailRow(
+              context,
+              'Natural Extract (NCS)',
+              ncs.name,
+              valueColor: AppColors.naturalGreen.resolveFrom(context),
+              isBold: true,
+            ),
+            _buildDivider(context),
+            _buildDetailRow(
+              context,
+              'Regulated Constituents',
+              '${ncs.constituents.length} entries (tap to inspect)',
+            ),
+          ]),
+        ),
+      ],
+      const SizedBox(height: 24),
+    ];
   }
 
   void _confirmDelete(BuildContext context, WidgetRef ref) {

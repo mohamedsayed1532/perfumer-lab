@@ -77,7 +77,7 @@ class LabUtilitiesScreen extends ConsumerWidget {
                       icon: CupertinoIcons.shield_lefthalf_fill,
                       iconColor: AppColors.accent.resolveFrom(context),
                       title: 'IFRA 51st Amendment Limits',
-                      subtitle: 'Category 4 fine fragrance threshold reference',
+                      subtitle: 'Search all 263 standards & 302 natural extracts',
                       onTap: () {
                         showCupertinoModalPopup(
                           context: context,

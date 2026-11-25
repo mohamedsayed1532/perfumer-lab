@@ -7,11 +7,13 @@ import 'package:perfumery_lab/core/utils/haptics.dart';
 class IfraSafetyBanner extends StatelessWidget {
   final IfraFormulaEvaluation evaluation;
   final double targetConcentrationPercent;
+  final String categoryKey;
 
   const IfraSafetyBanner({
     super.key,
     required this.evaluation,
     required this.targetConcentrationPercent,
+    this.categoryKey = 'Cat 4',
   });
 
   @override
@@ -36,8 +38,8 @@ class IfraSafetyBanner extends StatelessWidget {
         : 'IFRA Safety Alert: ${violations.length} Restricted ${violations.length == 1 ? "Material" : "Materials"}';
 
     final subtitle = isCompliant
-        ? 'All materials safe for Category 4 skin contact at ${targetConcentrationPercent.toStringAsFixed(0)}% EdP.'
-        : 'Exceeds maximum allowable skin exposure threshold. Tap for allowable limits.';
+        ? 'All materials safe for $categoryKey contact at ${targetConcentrationPercent.toStringAsFixed(0)}% concentration.'
+        : 'Exceeds IFRA $categoryKey limit or uses a prohibited material. Tap for details.';
 
     return GestureDetector(
       onTap: isCompliant
@@ -150,7 +152,7 @@ class IfraSafetyBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'IFRA 51st Amendment limits apply to finished products applied to skin (Category 4 Fine Fragrance at ${targetConcentrationPercent.toStringAsFixed(0)}% concentration):',
+                    'IFRA 51st Amendment limits apply to finished products ($categoryKey at ${targetConcentrationPercent.toStringAsFixed(0)}% concentration):',
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.secondaryLabel.resolveFrom(context),
@@ -208,16 +210,22 @@ class IfraSafetyBanner extends StatelessWidget {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                '• IFRA Category 4 Max: ${v.maxAllowedSkinExposurePercent.toStringAsFixed(3)}%',
+                                v.isProhibited
+                                    ? '• IFRA Status: PROHIBITED under IFRA 51st Amendment'
+                                    : '• IFRA $categoryKey Max: ${v.maxAllowedSkinExposurePercent.toStringAsFixed(3)}%',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.secondaryLabel
-                                      .resolveFrom(context),
+                                  color: v.isProhibited
+                                      ? CupertinoColors.systemRed
+                                      : AppColors.secondaryLabel
+                                          .resolveFrom(context),
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '• Max Allowed in Formula: ${v.maxAllowedPpt.toStringAsFixed(1)} ppt (to be 100% compliant)',
+                                v.isProhibited
+                                    ? '• Remove this ingredient to comply with IFRA standards.'
+                                    : '• Max Allowed in Formula: ${v.maxAllowedPpt.toStringAsFixed(1)} ppt (to be 100% compliant)',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,

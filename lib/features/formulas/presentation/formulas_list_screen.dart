@@ -1,5 +1,6 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:perfumery_lab/core/services/ifra_catalog_service.dart';
 import 'package:perfumery_lab/core/services/ifra_safety_service.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
@@ -22,6 +23,7 @@ class _FormulasListScreenState extends ConsumerState<FormulasListScreen> {
   @override
   Widget build(BuildContext context) {
     final formulasAsync = ref.watch(formulasWithItemsStreamProvider);
+    final catalog = ref.watch(ifraCatalogProvider).value;
 
     return LiquidGlassBackground(
       child: CupertinoPageScaffold(
@@ -99,7 +101,7 @@ class _FormulasListScreenState extends ConsumerState<FormulasListScreen> {
                 const ifraService = IfraSafetyService();
                 int compliantCount = 0;
                 for (final f in allFormulas) {
-                  final eval = _evaluateIfra(ifraService, f);
+                  final eval = _evaluateIfra(ifraService, f, catalog);
                   if (eval.isCompliant) compliantCount++;
                 }
 
@@ -204,7 +206,7 @@ class _FormulasListScreenState extends ConsumerState<FormulasListScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final data = filtered[index];
-                            final eval = _evaluateIfra(ifraService, data);
+                            final eval = _evaluateIfra(ifraService, data, catalog);
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _buildFormulaCard(
@@ -235,17 +237,24 @@ class _FormulasListScreenState extends ConsumerState<FormulasListScreen> {
     );
   }
 
-  IfraFormulaEvaluation _evaluateIfra(
-      IfraSafetyService service, FormulaWithMaterials data) {
-    final inputs = data.items
-        .map((i) => FormulaItemSafetyInput(
-              id: i.item.id,
-              name: i.material.name,
-              partsPerThousand: i.item.partsPerThousand,
-              specifiedDilutionPercent: i.item.specifiedDilutionPercent,
-              idealMaxPercent: i.material.idealMaxPercent,
-            ))
-        .toList();
+  IfraFormulaEvaluation _evaluateIfra(IfraSafetyService service,
+      FormulaWithMaterials data, IfraCatalogData? catalog) {
+    final inputs = data.items.map((i) {
+      final std = catalog?.findStandardForMaterial(
+        casNumber: i.material.casNumber,
+        name: i.material.name,
+      );
+      final officialLimit = std?.numericLimitFor('Cat 4');
+      final isProhibited = std?.type == 'PROHIBITION';
+      return FormulaItemSafetyInput(
+        id: i.item.id,
+        name: i.material.name,
+        partsPerThousand: i.item.partsPerThousand,
+        specifiedDilutionPercent: i.item.specifiedDilutionPercent,
+        idealMaxPercent: officialLimit ?? i.material.idealMaxPercent,
+        isProhibited: isProhibited,
+      );
+    }).toList();
     return service.evaluateFormulaSafety(
       targetConcentrationPercent: data.formula.targetConcentrationPercent,
       items: inputs,

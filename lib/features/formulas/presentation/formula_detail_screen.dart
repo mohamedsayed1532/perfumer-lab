@@ -1,6 +1,7 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
+import 'package:perfumery_lab/core/services/ifra_catalog_service.dart';
 import 'package:perfumery_lab/core/services/ifra_safety_service.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
@@ -23,11 +24,13 @@ class FormulaDetailScreen extends ConsumerStatefulWidget {
 
 class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
   String _viewMode = 'ppt'; // 'ppt' | 'grams' | 'active'
+  String _ifraCategory = 'Cat 4';
 
   @override
   Widget build(BuildContext context) {
     final repo = ref.watch(formulasRepositoryProvider);
     final formulaStream = repo.watchFormulaWithItems(widget.formulaId);
+    final catalog = ref.watch(ifraCatalogProvider).value;
 
     return StreamBuilder<FormulaWithMaterials?>(
       stream: formulaStream,
@@ -45,17 +48,25 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
         final totalPercent = totalPpt / 10.0;
 
         const ifraService = IfraSafetyService();
-        final safetyInputs = items
-            .map(
-              (i) => FormulaItemSafetyInput(
-                id: i.item.id,
-                name: i.material.name,
-                partsPerThousand: i.item.partsPerThousand,
-                specifiedDilutionPercent: i.item.specifiedDilutionPercent,
-                idealMaxPercent: i.material.idealMaxPercent,
-              ),
-            )
-            .toList();
+        final safetyInputs = items.map((i) {
+          final std = catalog?.findStandardForMaterial(
+            casNumber: i.material.casNumber,
+            name: i.material.name,
+          );
+          final officialLimit = std?.numericLimitFor(_ifraCategory);
+          final isProhibited = std?.type == 'PROHIBITION';
+          final effectiveLimit = _ifraCategory == 'Cat 4'
+              ? (officialLimit ?? i.material.idealMaxPercent)
+              : officialLimit;
+          return FormulaItemSafetyInput(
+            id: i.item.id,
+            name: i.material.name,
+            partsPerThousand: i.item.partsPerThousand,
+            specifiedDilutionPercent: i.item.specifiedDilutionPercent,
+            idealMaxPercent: effectiveLimit,
+            isProhibited: isProhibited,
+          );
+        }).toList();
 
         final ifraEvaluation = ifraService.evaluateFormulaSafety(
           targetConcentrationPercent: formula.targetConcentrationPercent,
@@ -178,13 +189,72 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
                     ),
                   ),
 
-                  // IFRA 51st Amendment Safety Banner
+                  // IFRA 51st Amendment Safety Banner + Category Selector
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    child: IfraSafetyBanner(
-                      evaluation: ifraEvaluation,
-                      targetConcentrationPercent:
-                          formula.targetConcentrationPercent,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'IFRA Compliance Check',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.tertiaryLabel
+                                    .resolveFrom(context),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => _pickIfraCategory(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 9, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondarySystemBackground
+                                      .resolveFrom(context),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: AppColors.cardBorder
+                                        .resolveFrom(context),
+                                    width: 0.75,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _ifraCategory,
+                                      style: AppTypography.monoData(
+                                        context,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.accentInk
+                                            .resolveFrom(context),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      CupertinoIcons.chevron_up_chevron_down,
+                                      size: 11,
+                                      color: AppColors.accentInk
+                                          .resolveFrom(context),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        IfraSafetyBanner(
+                          evaluation: ifraEvaluation,
+                          targetConcentrationPercent:
+                              formula.targetConcentrationPercent,
+                          categoryKey: _ifraCategory,
+                        ),
+                      ],
                     ),
                   ),
 
@@ -273,6 +343,7 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
                             items: items,
                             totalPpt: totalPpt,
                             ifraService: ifraService,
+                            catalog: catalog,
                           ),
                   ),
                   if (items.isNotEmpty)
@@ -379,12 +450,48 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
     );
   }
 
+  void _pickIfraCategory(BuildContext context) {
+    const commonCats = [
+      ('Cat 1', 'Cat 1 · Lip & Oral'),
+      ('Cat 2', 'Cat 2 · Deodorants'),
+      ('Cat 3', 'Cat 3 · Face / Shaved Skin'),
+      ('Cat 4', 'Cat 4 · Fine Fragrance'),
+      ('Cat 5A', 'Cat 5A · Body Lotion'),
+      ('Cat 9', 'Cat 9 · Soap / Rinse-Off'),
+      ('Cat 10A', 'Cat 10A · Diffusers / Home'),
+      ('Cat 12', 'Cat 12 · Candles / Air Care'),
+    ];
+    showCupertinoModalPopup(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        title: const Text('Select IFRA 51st Product Category'),
+        actions: commonCats
+            .map(
+              (c) => CupertinoActionSheetAction(
+                isDefaultAction: c.$1 == _ifraCategory,
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  setState(() => _ifraCategory = c.$1);
+                },
+                child: Text(c.$2),
+              ),
+            )
+            .toList(),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
   Widget _buildGroupedIngredientsList(
     BuildContext context, {
     required Formula formula,
     required List<FormulaItemWithMaterial> items,
     required double totalPpt,
     required IfraSafetyService ifraService,
+    required IfraCatalogData? catalog,
   }) {
     final topItems = <FormulaItemWithMaterial>[];
     final heartItems = <FormulaItemWithMaterial>[];
@@ -473,6 +580,7 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
                 row: row,
                 totalPpt: totalPpt,
                 ifraService: ifraService,
+                catalog: catalog,
                 noteIcon: section.icon,
                 noteColor: section.color,
               ),
@@ -496,6 +604,7 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
     required FormulaItemWithMaterial row,
     required double totalPpt,
     required IfraSafetyService ifraService,
+    required IfraCatalogData? catalog,
     required IconData noteIcon,
     required Color noteColor,
   }) {
@@ -505,8 +614,18 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
         ? (item.partsPerThousand / totalPpt) * 100.0
         : item.partsPerThousand / 10.0;
 
+    final std = catalog?.findStandardForMaterial(
+      casNumber: mat.casNumber,
+      name: mat.name,
+    );
+    final officialLimit = std?.numericLimitFor(_ifraCategory);
+    final isProhibited = std?.type == 'PROHIBITION';
+    final effectiveMaxPercent = _ifraCategory == 'Cat 4'
+        ? (officialLimit ?? mat.idealMaxPercent)
+        : officialLimit;
+
     final hasIfraLimit =
-        mat.idealMaxPercent != null && mat.idealMaxPercent! > 0;
+        isProhibited || (effectiveMaxPercent != null && effectiveMaxPercent > 0);
     final skinExposure = hasIfraLimit
         ? ifraService.calculateSkinExposure(
             partsPerThousand: item.partsPerThousand,
@@ -515,8 +634,10 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
             targetConcentrationPercent: formula.targetConcentrationPercent,
           )
         : 0.0;
-    final isOverIfra =
-        hasIfraLimit && (skinExposure > (mat.idealMaxPercent! + 0.00001));
+    final isOverIfra = isProhibited ||
+        (effectiveMaxPercent != null &&
+            effectiveMaxPercent > 0 &&
+            skinExposure > (effectiveMaxPercent + 0.00001));
 
     String primaryMetric;
     String secondaryMetric;
@@ -599,9 +720,11 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            isOverIfra
-                                ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%'
-                                : 'IFRA Safe: ${skinExposure.toStringAsFixed(2)}% (Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%)',
+                            isProhibited
+                                ? 'IFRA 51st PROHIBITED'
+                                : (isOverIfra
+                                    ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${effectiveMaxPercent!.toStringAsFixed(2)}%'
+                                    : 'IFRA Safe ($_ifraCategory): ${skinExposure.toStringAsFixed(2)}% (Max ${effectiveMaxPercent!.toStringAsFixed(2)}%)'),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
