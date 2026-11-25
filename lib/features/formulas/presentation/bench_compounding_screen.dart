@@ -111,72 +111,58 @@ class _BenchCompoundingScreenState
         child: SafeArea(
           child: Column(
             children: [
-              // Top Bench HUD Card
+              // Top 3-Tile Lab HUD Card
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
                 child: LiquidGlass(
-                  padding: const EdgeInsets.all(18),
-                  borderRadius: BorderRadius.circular(20),
+                  padding: const EdgeInsets.all(14),
+                  borderRadius: BorderRadius.circular(14),
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Scale dispense progress',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.secondaryLabel
-                                      .resolveFrom(context),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${totalAddedSoFar.toStringAsFixed(3)} g',
-                                style: AppTypography.precisionNumber(context,
-                                    fontSize: 28),
-                              ),
-                            ],
+                          Expanded(
+                            child: _buildHudMetricTile(
+                              context,
+                              label: 'Cumulative',
+                              value: '${totalAddedSoFar.toStringAsFixed(3)} g',
+                              color: AppColors.accentInk.resolveFrom(context),
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Batch goal',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.secondaryLabel
-                                      .resolveFrom(context),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${_targetBatchGrams.toStringAsFixed(1)} g',
-                                style: AppTypography.precisionNumber(context,
-                                    fontSize: 24),
-                              ),
-                            ],
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildHudMetricTile(
+                              context,
+                              label: 'Target mass',
+                              value: '${_targetBatchGrams.toStringAsFixed(1)} g',
+                              color: AppColors.label.resolveFrom(context),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _buildHudMetricTile(
+                              context,
+                              label: 'Yield',
+                              value: '${(progressPercent * 100).toStringAsFixed(1)}%',
+                              color: AppColors.naturalGreen.resolveFrom(context),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(4),
                         child: Container(
-                          height: 8,
-                          color: AppColors.tertiaryLabel.resolveFrom(context),
+                          width: double.infinity,
+                          height: 6,
+                          color: AppColors.recessedWell.resolveFrom(context),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: FractionallySizedBox(
                               widthFactor: progressPercent,
                               child: Container(
                                 color: progressPercent >= 1.0
-                                    ? CupertinoColors.systemGreen
+                                    ? AppColors.naturalGreen.resolveFrom(context)
                                     : AppColors.accent.resolveFrom(context),
                               ),
                             ),
@@ -336,27 +322,42 @@ class _BenchCompoundingScreenState
                         child: Row(
                           children: [
                             Container(
-                              width: 36,
-                              height: 36,
+                              width: 34,
+                              height: 34,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isDone
-                                    ? CupertinoColors.systemGreen
-                                        .withValues(alpha: 0.2)
-                                    : AppColors.tertiaryLabel
+                                    ? AppColors.naturalGreen
+                                        .resolveFrom(context)
+                                        .withValues(alpha: 0.16)
+                                    : AppColors.recessedWell
                                         .resolveFrom(context),
+                                border: Border.all(
+                                  color: isDone
+                                      ? AppColors.naturalGreen
+                                          .resolveFrom(context)
+                                      : AppColors.cardBorder.resolveFrom(context),
+                                  width: 0.75,
+                                ),
                               ),
                               child: Center(
-                                child: Icon(
-                                  isDone
-                                      ? CupertinoIcons.check_mark
-                                      : CupertinoIcons.circle,
-                                  size: 18,
-                                  color: isDone
-                                      ? CupertinoColors.systemGreen
-                                      : AppColors.secondaryLabel
-                                          .resolveFrom(context),
-                                ),
+                                child: isDone
+                                    ? Icon(
+                                        CupertinoIcons.check_mark,
+                                        size: 16,
+                                        color: AppColors.naturalGreen
+                                            .resolveFrom(context),
+                                      )
+                                    : Text(
+                                        (index + 1).toString().padLeft(2, '0'),
+                                        style: AppTypography.monoData(
+                                          context,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.secondaryLabel
+                                              .resolveFrom(context),
+                                        ),
+                                      ),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -449,6 +450,45 @@ class _BenchCompoundingScreenState
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHudMetricTile(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.recessedWell.resolveFrom(context),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: AppColors.cardBorder.resolveFrom(context), width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 11,
+              color: AppColors.tertiaryLabel.resolveFrom(context),
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.precisionNumber(context, fontSize: 15)
+                .copyWith(color: color),
+          ),
+        ],
       ),
     );
   }

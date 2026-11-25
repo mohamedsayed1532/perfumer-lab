@@ -71,80 +71,64 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
             ),
           ),
 
-          // Floating Island Tab Bar
+          // Anchored Analytical Lab Tab Bar
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: bottomPadding > 0 ? bottomPadding : 16,
-            child: _buildFloatingIsland(context, isDark),
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomBar(context, isDark, bottomPadding),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFloatingIsland(BuildContext context, bool isDark) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
+  Widget _buildBottomBar(
+    BuildContext context,
+    bool isDark,
+    double bottomPadding,
+  ) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 8,
+            right: 8,
+            top: 8,
+            bottom: bottomPadding > 0 ? bottomPadding : 10,
+          ),
+          decoration: BoxDecoration(
             color: isDark
-                ? const Color(0x66000000)
-                : const Color(0x26000000),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
-            spreadRadius: -2,
-          ),
-          BoxShadow(
-            color: AppColors.accent
-                .resolveFrom(context)
-                .withValues(alpha: isDark ? 0.08 : 0.04),
-            blurRadius: 24,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-          child: Container(
-            height: 68,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: isDark
-                  ? const Color(0xE012131C) // Translucent deep obsidian glass
-                  : const Color(0xE8FFFFFF), // Frosted white glass
-              border: Border.all(
-                color: isDark
-                    ? const Color(0x35E5A93C) // Specular warm champagne highlight
-                    : const Color(0x60FFFFFF),
+                ? const Color(0xEB0F141A)
+                : const Color(0xEBFFFFFF),
+            border: Border(
+              top: BorderSide(
+                color: AppColors.separator.resolveFrom(context),
                 width: 0.75,
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(_tabs.length, (index) {
-                final tab = _tabs[index];
-                final isSelected = _currentIndex == index;
-                return Expanded(
-                  child: CupertinoButton(
-                    key: ValueKey('tab_${tab.label}'),
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    onPressed: () {
-                      if (_currentIndex != index) {
-                        LabHaptics.selection();
-                        setState(() => _currentIndex = index);
-                      }
-                    },
-                    child: _buildTabButton(context, tab, isSelected, isDark),
-                  ),
-                );
-              }),
-            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(_tabs.length, (index) {
+              final tab = _tabs[index];
+              final isSelected = _currentIndex == index;
+              return Expanded(
+                child: CupertinoButton(
+                  key: ValueKey('tab_${tab.label}'),
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  onPressed: () {
+                    if (_currentIndex != index) {
+                      LabHaptics.selection();
+                      setState(() => _currentIndex = index);
+                    }
+                  },
+                  child: _buildTabButton(context, tab, isSelected, isDark),
+                ),
+              );
+            }),
           ),
         ),
       ),
@@ -158,10 +142,9 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
     bool isDark,
   ) {
     final activeColor = AppColors.accent.resolveFrom(context);
+    final inactiveColor = AppColors.tertiaryLabel.resolveFrom(context);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOutCubic,
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -169,49 +152,20 @@ class _AppTabScaffoldState extends State<AppTabScaffold> {
         children: [
           Icon(
             isSelected ? tab.activeIcon : tab.icon,
-            size: isSelected ? 23 : 21,
-            color: isSelected
-                ? activeColor
-                : (isDark
-                    ? const Color(0x8AFFFFFF)
-                    : const Color(0x8A000000)),
+            size: 21,
+            color: isSelected ? activeColor : inactiveColor,
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Text(
             tab.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              letterSpacing: 0.2,
-              color: isSelected
-                  ? activeColor
-                  : (isDark
-                      ? const Color(0x8AFFFFFF)
-                      : const Color(0x8A000000)),
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              color: isSelected ? activeColor : inactiveColor,
             ),
           ),
-          if (isSelected) ...[
-            const SizedBox(height: 2),
-            Container(
-              width: 4,
-              height: 4,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: activeColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: activeColor.withValues(alpha: 0.6),
-                    blurRadius: 4,
-                    spreadRadius: 0.5,
-                  ),
-                ],
-              ),
-            ),
-          ] else ...[
-            const SizedBox(height: 6),
-          ],
         ],
       ),
     );

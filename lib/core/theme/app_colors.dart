@@ -1,90 +1,135 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 
-/// Semantic adaptive colors following Apple HIG guidelines.
-/// Meets WCAG AA contrast (minimum 4.5:1, striving for 7:1 for text).
+/// Semantic adaptive colors following the Stitch Analytical Lab palette & Apple HIG contrast rules.
 class AppColors {
   AppColors._();
 
   // Background hierarchy
   static const CupertinoDynamicColor systemBackground =
-      CupertinoColors.systemBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFF2F5F8),
+    darkColor: Color(0xFF0F141A), // Stitch surface_dim
+  );
   static const CupertinoDynamicColor secondarySystemBackground =
-      CupertinoColors.secondarySystemBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFFFFFFF),
+    darkColor: Color(0xFF181C23), // Stitch surface_container_low
+  );
   static const CupertinoDynamicColor tertiarySystemBackground =
-      CupertinoColors.tertiarySystemBackground;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFE9EFF5),
+    darkColor: Color(0xFF1C2027), // Stitch surface_container
+  );
 
   static const CupertinoDynamicColor systemGroupedBackground =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFF2F2F7), // Apple HIG grouped background (light)
-    darkColor: Color(0xFF0D0E17), // Deep midnight to match LiquidGlassBackground
+    color: Color(0xFFF2F5F8),
+    darkColor: Color(0xFF0F141A),
   );
   static const CupertinoDynamicColor secondarySystemGroupedBackground =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFFFFFFF), // Apple HIG secondary grouped (light)
-    darkColor: Color(0xFF1A1C29), // Elevated midnight card surface
+    color: Color(0xFFFFFFFF),
+    darkColor: Color(0xFF1C2027), // Stitch surface_container
   );
   static const CupertinoDynamicColor tertiarySystemGroupedBackground =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFF2F2F7),
-    darkColor: Color(0xFF222538), // Tertiary card surface
+    color: Color(0xFFE9EFF5),
+    darkColor: Color(0xFF262A32), // Stitch surface_container_high
+  );
+
+  /// Recessed dark well for numeric scale readouts and telemetry tiles.
+  static const CupertinoDynamicColor recessedWell =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFE5ECF2),
+    darkColor: Color(0xFF0A0E15), // Stitch surface_container_lowest
   );
 
   // Text / Label hierarchy
-  static const CupertinoDynamicColor label = CupertinoColors.label;
+  static const CupertinoDynamicColor label =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF0F141A),
+    darkColor: Color(0xFFDFE2EC), // Stitch on_surface
+  );
   static const CupertinoDynamicColor secondaryLabel =
-      CupertinoColors.secondaryLabel;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF475569),
+    darkColor: Color(0xFFBDC8D1), // Stitch on_surface_variant
+  );
   static const CupertinoDynamicColor tertiaryLabel =
-      CupertinoColors.tertiaryLabel;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF64748B),
+    darkColor: Color(0xFF87929A), // Stitch outline
+  );
   static const CupertinoDynamicColor quaternaryLabel =
       CupertinoColors.quaternaryLabel;
 
   // Separator & Borders
-  static const CupertinoDynamicColor separator = CupertinoColors.separator;
+  static const CupertinoDynamicColor separator =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFD0D8E0),
+    darkColor: Color(0xFF3E484F), // Stitch outline_variant
+  );
   static const CupertinoDynamicColor opaqueSeparator =
-      CupertinoColors.opaqueSeparator;
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFC2CCD6),
+    darkColor: Color(0xFF3E484F),
+  );
 
-  // Accent & Fragrance-domain colors — Radiant Champagne & Warm Amber Atelier Palette
+  // Stitch Analytical Lab Accents
   static const CupertinoDynamicColor accent =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xFF9E6510), // Warm amber-brass, light mode
-    darkColor: Color(0xFFE5A93C), // Radiant champagne amber gold, dark mode
-  );
-  static const CupertinoDynamicColor amberRose = CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFC0392B),
-    darkColor: Color(0xFFE57373),
-  );
-  static const CupertinoDynamicColor goldAccent = CupertinoDynamicColor.withBrightness(
-    color: Color(0xFFD4AC0D),
-    darkColor: Color(0xFFF3C668),
-  );
-  static const CupertinoDynamicColor naturalGreen = CupertinoDynamicColor.withBrightness(
-    color: Color(0xFF27AE60),
-    darkColor: Color(0xFF48BB78),
+    color: Color(0xFF0284C7), // Crisp cyan-blue (light)
+    darkColor: Color(0xFF38BDF8), // Stitch primary_container / customColor
   );
 
-  // Liquid Glass base colors
+  /// High-readability cyan ink for inline telemetry & numeric accents on dark surfaces.
+  static const CupertinoDynamicColor accentInk =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF0369A1),
+    darkColor: Color(0xFF8ED5FF), // Stitch primary
+  );
+
+  static const CupertinoDynamicColor amberRose =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFDC2626),
+    darkColor: Color(0xFFFFB4AB), // Stitch error
+  );
+
+  static const CupertinoDynamicColor goldAccent =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF0284C7),
+    darkColor: Color(0xFF7BD0FF), // Stitch primary_fixed_dim
+  );
+
+  static const CupertinoDynamicColor naturalGreen =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF059669),
+    darkColor: Color(0xFF56E5A9), // Stitch tertiary emerald
+  );
+
+  // Translucent chrome & card borders
   static const CupertinoDynamicColor liquidGlassBg =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0xD9FFFFFF), // 85% translucent white frosted glass
-    darkColor: Color(0xD012131C), // Deep obsidian glass
+    color: Color(0xE6FFFFFF),
+    darkColor: Color(0xE60F141A),
   );
 
   static const CupertinoDynamicColor liquidGlassBorder =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0x4DFFFFFF), // 30% specular light highlight
-    darkColor: Color(0x35E5A93C), // Specular warm champagne gold highlight
+    color: Color(0x330F141A),
+    darkColor: Color(0xFF3E484F),
   );
 
   static const CupertinoDynamicColor cardBorder =
       CupertinoDynamicColor.withBrightness(
-    color: Color(0x1A000000), // Subtle hairline card border (light)
-    darkColor: Color(0x24FFFFFF), // Translucent specular hairline (dark)
+    color: Color(0xFFDCE3EA),
+    darkColor: Color(0xFF3E484F),
   );
 
   /// High-contrast foreground color for text/icons rendered on [accent] surfaces.
   static Color onAccent(BuildContext context) {
     return CupertinoTheme.brightnessOf(context) == Brightness.dark
-        ? const Color(0xFF14161E)
+        ? const Color(0xFF001E2C) // Stitch on_primary_fixed
         : CupertinoColors.white;
   }
 }

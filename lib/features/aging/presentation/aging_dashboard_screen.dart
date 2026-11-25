@@ -143,8 +143,8 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
         (targetDays > 0) ? (daysElapsed / targetDays).clamp(0.0, 1.0) : 1.0;
     final isMaturation = batch.stage == 'maturation';
     final stageColor = isMaturation
-        ? const Color(0xFFD47355) // Rich cognac amber for maturation
-        : AppColors.accent.resolveFrom(context); // Radiant champagne amber for maceration
+        ? AppColors.naturalGreen.resolveFrom(context)
+        : AppColors.accent.resolveFrom(context);
 
     return GestureDetector(
       onTap: () => _openEditSheet(context, batch),
@@ -240,8 +240,8 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: progress >= 1.0
-                          ? CupertinoColors.systemGreen
-                          : AppColors.accent.resolveFrom(context),
+                          ? AppColors.naturalGreen.resolveFrom(context)
+                          : stageColor,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

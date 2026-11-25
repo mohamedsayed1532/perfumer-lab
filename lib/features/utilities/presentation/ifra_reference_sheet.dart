@@ -131,16 +131,7 @@ class _IfraReferenceSheetState extends State<IfraReferenceSheet> {
     return Container(
       height: MediaQuery.sizeOf(context).height * 0.82,
       decoration: BoxDecoration(
-        gradient: CupertinoTheme.brightnessOf(context) == Brightness.dark
-            ? const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF16152B), Color(0xFF0D0E17)],
-              )
-            : null,
-        color: CupertinoTheme.brightnessOf(context) == Brightness.dark
-            ? null
-            : AppColors.systemGroupedBackground.resolveFrom(context),
+        color: AppColors.systemGroupedBackground.resolveFrom(context),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(

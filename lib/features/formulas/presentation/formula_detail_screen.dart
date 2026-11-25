@@ -106,106 +106,74 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
             child: SafeArea(
               child: Column(
                 children: [
-                  // Top Summary Card
+                  // Integrity Header Card
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
                     child: LiquidGlass(
-                      padding: const EdgeInsets.all(16),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Formula total',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.secondaryLabel
-                                            .resolveFrom(context),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      spacing: 8,
-                                      runSpacing: 4,
-                                      children: [
-                                        Text(
-                                          '${totalPpt.toStringAsFixed(1)} / 1000 ppt',
-                                          style: AppTypography.precisionNumber(
-                                            context,
-                                            fontSize: 19,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${totalPercent.toStringAsFixed(2)}%',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                            fontFeatures: const [
-                                              FontFeature.tabularFigures()
-                                            ],
-                                            color: AppColors.accent
-                                                .resolveFrom(context),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Opacity(
-                                opacity: items.isEmpty ? 0.4 : 1.0,
-                                child: CupertinoButton.filled(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 14, vertical: 9),
-                                  borderRadius: BorderRadius.circular(12),
-                                  onPressed: items.isEmpty
-                                      ? null
-                                      : () {
-                                          Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                              builder: (_) =>
-                                                  BenchCompoundingScreen(
-                                                formulaWithMaterials: data,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        CupertinoIcons.circle_grid_hex_fill,
-                                        size: 16,
-                                        color: AppColors.onAccent(context),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        'Compound',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.onAccent(context),
-                                        ),
-                                      ),
-                                    ],
+                      padding: const EdgeInsets.all(14),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.recessedWell.resolveFrom(context),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppColors.cardBorder.resolveFrom(context),
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Formula integrity',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.secondaryLabel
+                                        .resolveFrom(context),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                Text(
+                                  '${totalPercent.toStringAsFixed(2)}% Balanced',
+                                  style: AppTypography.monoData(
+                                    context,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.naturalGreen
+                                        .resolveFrom(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  totalPpt.toStringAsFixed(2),
+                                  style: AppTypography.precisionNumber(context,
+                                      fontSize: 26),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '/ 1,000.00 ppt',
+                                  style: AppTypography.monoData(
+                                    context,
+                                    fontSize: 13,
+                                    color: AppColors.accentInk
+                                        .resolveFrom(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -307,6 +275,85 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
                             ifraService: ifraService,
                           ),
                   ),
+                  if (items.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.liquidGlassBg.resolveFrom(context),
+                        border: Border(
+                          top: BorderSide(
+                            color: AppColors.separator.resolveFrom(context),
+                            width: 0.75,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          CupertinoButton(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            color: AppColors.tertiarySystemGroupedBackground
+                                .resolveFrom(context),
+                            borderRadius: BorderRadius.circular(12),
+                            onPressed: () =>
+                                _showAddIngredientSheet(context, formula.id),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(CupertinoIcons.add,
+                                    size: 16,
+                                    color: AppColors.label.resolveFrom(context)),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Ingredient',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.label.resolveFrom(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: CupertinoButton.filled(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              borderRadius: BorderRadius.circular(12),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (_) => BenchCompoundingScreen(
+                                      formulaWithMaterials: data,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.lab_flask_solid,
+                                    size: 16,
+                                    color: AppColors.onAccent(context),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Scale & Compound',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.onAccent(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -357,19 +404,19 @@ class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
     final sections = [
       (
         title: 'Top notes',
-        color: const Color(0xFFE5A93C),
+        color: AppColors.accent.resolveFrom(context),
         icon: CupertinoIcons.sparkles,
         rows: topItems,
       ),
       (
         title: 'Heart notes',
-        color: const Color(0xFFD47355),
+        color: AppColors.naturalGreen.resolveFrom(context),
         icon: CupertinoIcons.heart_fill,
         rows: heartItems,
       ),
       (
         title: 'Base notes',
-        color: const Color(0xFFA67C52),
+        color: AppColors.secondaryLabel.resolveFrom(context),
         icon: CupertinoIcons.shield_fill,
         rows: baseItems,
       ),

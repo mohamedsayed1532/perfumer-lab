@@ -125,6 +125,9 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
           ),
           materialsAsync.when(
             data: (materials) {
+              final lowStockCount =
+                  materials.where((m) => m.stockGrams <= 0.5).length;
+              final inStockCount = materials.length - lowStockCount;
               final filtered = materials.where((m) {
                 final matchesQuery = _searchQuery.isEmpty ||
                     m.name.toLowerCase().contains(_searchQuery) ||
@@ -168,21 +171,68 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
                 );
               }
 
-              return SliverPadding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final item = filtered[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _buildMaterialCard(context, item),
-                      );
-                    },
-                    childCount: filtered.length,
+              return SliverMainAxisGroup(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 6),
+                      child: LiquidGlass(
+                        padding: const EdgeInsets.all(12),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildOrganStatTile(
+                                context,
+                                label: 'Vessels',
+                                value: '${materials.length}',
+                                color: AppColors.label.resolveFrom(context),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildOrganStatTile(
+                                context,
+                                label: 'In stock',
+                                value: '$inStockCount',
+                                color:
+                                    AppColors.naturalGreen.resolveFrom(context),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildOrganStatTile(
+                                context,
+                                label: 'Low stock',
+                                value: '$lowStockCount',
+                                color: lowStockCount > 0
+                                    ? CupertinoColors.systemRed
+                                    : AppColors.secondaryLabel
+                                        .resolveFrom(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  SliverPadding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = filtered[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: _buildMaterialCard(context, item),
+                          );
+                        },
+                        childCount: filtered.length,
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
             loading: () => const SliverFillRemaining(
@@ -200,7 +250,6 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
   }
 
   Widget _buildSegmentLabel(String text, bool isSelected) {
-    final isDark = CupertinoTheme.brightnessOf(context) == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Text(
@@ -209,9 +258,44 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
           fontSize: 13,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           color: isSelected
-              ? (isDark ? const Color(0xFF14161E) : CupertinoColors.white)
+              ? AppColors.onAccent(context)
               : AppColors.label.resolveFrom(context),
         ),
+      ),
+    );
+  }
+
+  Widget _buildOrganStatTile(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: AppColors.recessedWell.resolveFrom(context),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: AppColors.cardBorder.resolveFrom(context), width: 0.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: AppColors.tertiaryLabel.resolveFrom(context),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: AppTypography.precisionNumber(context, fontSize: 17)
+                .copyWith(color: color),
+          ),
+        ],
       ),
     );
   }
@@ -223,18 +307,18 @@ class _MaterialsListScreenState extends ConsumerState<MaterialsListScreen> {
     switch (item.pyramidNote.toLowerCase()) {
       case 'top':
         noteIcon = CupertinoIcons.sparkles;
-        noteColor = const Color(0xFFE5A93C); // Radiant amber — volatile top
+        noteColor = AppColors.accent.resolveFrom(context);
         noteTitle = 'Top note';
         break;
       case 'heart':
         noteIcon = CupertinoIcons.heart_fill;
-        noteColor = const Color(0xFFD47355); // Rose damask — accord heart
+        noteColor = AppColors.naturalGreen.resolveFrom(context);
         noteTitle = 'Heart note';
         break;
       case 'base':
       default:
         noteIcon = CupertinoIcons.shield_fill;
-        noteColor = const Color(0xFFA67C52); // Resinous oud — grounding base
+        noteColor = AppColors.secondaryLabel.resolveFrom(context);
         noteTitle = 'Base note';
         break;
     }

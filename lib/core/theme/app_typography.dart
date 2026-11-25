@@ -96,10 +96,24 @@ class AppTypography {
 
   static TextStyle precisionNumber(BuildContext context, {double fontSize = 24}) =>
       TextStyle(
-        fontFamily: '.SF Pro Rounded',
+        fontFamily: 'monospace',
         fontSize: fontSize,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w600,
         fontFeatures: const [FontFeature.tabularFigures()],
         color: AppColors.label.resolveFrom(context),
+      );
+
+  static TextStyle monoData(
+    BuildContext context, {
+    double fontSize = 12,
+    Color? color,
+    FontWeight fontWeight = FontWeight.w500,
+  }) =>
+      TextStyle(
+        fontFamily: 'monospace',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        fontFeatures: const [FontFeature.tabularFigures()],
+        color: color ?? AppColors.secondaryLabel.resolveFrom(context),
       );
 }

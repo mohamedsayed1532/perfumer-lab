@@ -14,6 +14,12 @@ final formulasStreamProvider = StreamProvider<List<Formula>>((ref) {
   return repo.watchAllFormulas();
 });
 
+final formulasWithItemsStreamProvider =
+    StreamProvider<List<FormulaWithMaterials>>((ref) {
+  final repo = ref.watch(formulasRepositoryProvider);
+  return repo.watchAllFormulasWithItems();
+});
+
 class FormulaWithMaterials {
   final Formula formula;
   final List<FormulaItemWithMaterial> items;
@@ -69,6 +75,33 @@ class FormulasRepository {
             (t) => OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)
           ]))
         .watch();
+  }
+
+  Stream<List<FormulaWithMaterials>> watchAllFormulasWithItems() {
+    return watchAllFormulas().asyncMap((formulas) async {
+      if (formulas.isEmpty) return <FormulaWithMaterials>[];
+
+      final rows = await _db.select(_db.formulaItems).join([
+        innerJoin(_db.materials,
+            _db.materials.id.equalsExp(_db.formulaItems.materialId))
+      ]).get();
+
+      final grouped = <String, List<FormulaItemWithMaterial>>{};
+      for (final row in rows) {
+        final item = row.readTable(_db.formulaItems);
+        final mat = row.readTable(_db.materials);
+        grouped.putIfAbsent(item.formulaId, () => []).add(
+              FormulaItemWithMaterial(item: item, material: mat),
+            );
+      }
+
+      return formulas
+          .map((f) => FormulaWithMaterials(
+                formula: f,
+                items: grouped[f.id] ?? const [],
+              ))
+          .toList();
+    });
   }
 
   Stream<FormulaWithMaterials?> watchFormulaWithItems(String formulaId) {
