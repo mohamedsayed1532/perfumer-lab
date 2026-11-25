@@ -110,62 +110,56 @@ class FormulaDetailScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'FORMULA TOTAL',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.5,
-                                      color: AppColors.secondaryLabel
-                                          .resolveFrom(context),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.baseline,
-                                    textBaseline: TextBaseline.alphabetic,
-                                    children: [
-                                      Text(
-                                        '${totalPpt.toStringAsFixed(1)} / 1000 ppt',
-                                        style: AppTypography.precisionNumber(
-                                          context,
-                                          fontSize: 20,
-                                        ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Formula total',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.secondaryLabel
+                                            .resolveFrom(context),
                                       ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 6, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.accent
-                                              .resolveFrom(context)
-                                              .withValues(alpha: 0.18),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: 8,
+                                      runSpacing: 4,
+                                      children: [
+                                        Text(
+                                          '${totalPpt.toStringAsFixed(1)} / 1000 ppt',
+                                          style: AppTypography.precisionNumber(
+                                            context,
+                                            fontSize: 19,
+                                          ),
                                         ),
-                                        child: Text(
+                                        Text(
                                           '${totalPercent.toStringAsFixed(2)}%',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            fontWeight: FontWeight.w700,
+                                            fontWeight: FontWeight.w600,
+                                            fontFeatures: const [
+                                              FontFeature.tabularFigures()
+                                            ],
                                             color: AppColors.accent
                                                 .resolveFrom(context),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(width: 12),
                               Opacity(
                                 opacity: items.isEmpty ? 0.4 : 1.0,
                                 child: CupertinoButton.filled(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                                      horizontal: 14, vertical: 9),
                                   borderRadius: BorderRadius.circular(12),
                                   onPressed: items.isEmpty
                                       ? null
@@ -180,21 +174,21 @@ class FormulaDetailScreen extends ConsumerWidget {
                                             ),
                                           );
                                         },
-                                  child: const Row(
+                                  child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
                                         CupertinoIcons.circle_grid_hex_fill,
                                         size: 16,
-                                        color: CupertinoColors.white,
+                                        color: AppColors.onAccent(context),
                                       ),
-                                      SizedBox(width: 6),
+                                      const SizedBox(width: 6),
                                       Text(
                                         'Compound',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: CupertinoColors.white,
+                                          color: AppColors.onAccent(context),
                                         ),
                                       ),
                                     ],
@@ -254,18 +248,18 @@ class FormulaDetailScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   onPressed: () => _showAddIngredientSheet(
                                       context, formula.id),
-                                  child: const Row(
+                                  child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(CupertinoIcons.add,
                                           size: 18,
-                                          color: CupertinoColors.white),
-                                      SizedBox(width: 6),
+                                          color: AppColors.onAccent(context)),
+                                      const SizedBox(width: 6),
                                       Text(
                                         'Add Ingredient',
                                         style: TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          color: CupertinoColors.white,
+                                          color: AppColors.onAccent(context),
                                         ),
                                       ),
                                     ],
@@ -287,20 +281,24 @@ class FormulaDetailScreen extends ConsumerWidget {
 
                               IconData noteIcon;
                               Color noteColor;
+                              String noteTitle;
                               switch (mat.pyramidNote.toLowerCase()) {
                                 case 'top':
                                   noteIcon = CupertinoIcons.sparkles;
                                   noteColor = const Color(0xFFE5A93C);
+                                  noteTitle = 'Top note';
                                   break;
                                 case 'heart':
                                 case 'middle':
                                   noteIcon = CupertinoIcons.heart_fill;
                                   noteColor = const Color(0xFFD47355);
+                                  noteTitle = 'Heart note';
                                   break;
                                 case 'base':
                                 default:
                                   noteIcon = CupertinoIcons.shield_fill;
-                                  noteColor = const Color(0xFF8A3B3B);
+                                  noteColor = const Color(0xFFA67C52);
+                                  noteTitle = 'Base note';
                                   break;
                               }
 
@@ -326,25 +324,31 @@ class FormulaDetailScreen extends ConsumerWidget {
                                   row,
                                 ),
                                 child: LiquidGlass(
-                                  padding: const EdgeInsets.all(14),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 13),
                                   borderRadius: BorderRadius.circular(16),
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 40,
-                                        height: 40,
+                                        width: 36,
+                                        height: 36,
                                         decoration: BoxDecoration(
                                           color:
-                                              noteColor.withValues(alpha: 0.2),
+                                              noteColor.withValues(alpha: 0.12),
                                           borderRadius:
                                               BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: noteColor.withValues(
+                                                alpha: 0.28),
+                                            width: 0.75,
+                                          ),
                                         ),
                                         child: Center(
                                           child: Icon(noteIcon,
-                                              size: 18, color: noteColor),
+                                              size: 16, color: noteColor),
                                         ),
                                       ),
-                                      const SizedBox(width: 12),
+                                      const SizedBox(width: 14),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -352,15 +356,19 @@ class FormulaDetailScreen extends ConsumerWidget {
                                           children: [
                                             Text(
                                               mat.name,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
                                               style: AppTypography.atelierCardTitle(
                                                   context,
                                                   fontSize: 16),
                                             ),
                                             const SizedBox(height: 3),
                                             Text(
-                                              '${mat.pyramidNote.toUpperCase()} • ${item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution',
+                                              '$noteTitle • ${item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                fontSize: 12,
+                                                fontSize: 12.5,
                                                 color: AppColors.secondaryLabel
                                                     .resolveFrom(context),
                                               ),

@@ -29,11 +29,10 @@ class LabUtilitiesScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
                 child: Text(
-                  'LAB CALCULATORS',
+                  'Lab calculators',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
                     color: AppColors.secondaryLabel.resolveFrom(context),
                   ),
                 ),
@@ -96,11 +95,10 @@ class LabUtilitiesScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 24, 16, 6),
                 child: Text(
-                  'FORMULAS & BACKUPS',
+                  'Formulas & backups',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
                     color: AppColors.secondaryLabel.resolveFrom(context),
                   ),
                 ),
@@ -181,16 +179,13 @@ class LabUtilitiesScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(10),
+            SizedBox(
+              width: 28,
+              child: Center(
+                child: Icon(icon, color: iconColor, size: 20),
               ),
-              child: Icon(icon, color: iconColor, size: 20),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

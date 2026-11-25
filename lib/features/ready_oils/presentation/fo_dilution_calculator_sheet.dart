@@ -158,7 +158,7 @@ class _FoDilutionCalculatorSheetState
               const SizedBox(height: 16),
             ],
             Text(
-              'BATCH TARGETS',
+              'Batch targets',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -196,7 +196,7 @@ class _FoDilutionCalculatorSheetState
             ),
             const SizedBox(height: 24),
             Text(
-              'BENCH SCALE WEIGH-IN RECIPE',
+              'Bench scale weigh-in recipe',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -214,7 +214,7 @@ class _FoDilutionCalculatorSheetState
                     label: 'Fragrance Oil (FO)',
                     grams: oilGrams,
                     percentage: concPercent,
-                    color: CupertinoColors.systemPink,
+                    color: AppColors.accent.resolveFrom(context),
                     icon: CupertinoIcons.drop_fill,
                   ),
                   const SizedBox(height: 12),
@@ -224,7 +224,7 @@ class _FoDilutionCalculatorSheetState
                     grams: alcoholGrams,
                     percentage: (alcoholGrams / (totalGrams > 0 ? totalGrams : 1)) *
                         100.0,
-                    color: CupertinoColors.systemIndigo,
+                    color: AppColors.secondaryLabel.resolveFrom(context),
                     icon: CupertinoIcons.flame_fill,
                   ),
                   const SizedBox(height: 12),
@@ -233,7 +233,7 @@ class _FoDilutionCalculatorSheetState
                     label: 'Distilled Water',
                     grams: waterGrams,
                     percentage: waterPercent,
-                    color: CupertinoColors.systemTeal,
+                    color: AppColors.secondaryLabel.resolveFrom(context),
                     icon: CupertinoIcons.drop,
                   ),
                   const SizedBox(height: 14),
@@ -269,16 +269,20 @@ class _FoDilutionCalculatorSheetState
               child: CupertinoButton.filled(
                 borderRadius: BorderRadius.circular(14),
                 onPressed: totalGrams > 0 ? _startMacerationBatch : null,
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(CupertinoIcons.timer, size: 20),
-                    SizedBox(width: 8),
+                    Icon(CupertinoIcons.timer,
+                        size: 20, color: AppColors.onAccent(context)),
+                    const SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         'Start Maceration (30d)',
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.onAccent(context),
+                        ),
                       ),
                     ),
                   ],
@@ -299,16 +303,20 @@ class _FoDilutionCalculatorSheetState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
+        Expanded(
+          flex: 2,
+          child: Text(
             label,
             style: TextStyle(
               fontSize: 15,
               color: AppColors.label.resolveFrom(context),
             ),
           ),
-          SizedBox(
-            width: 140,
-            child: CupertinoTextField(
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 3,
+          child: CupertinoTextField(
               controller: controller,
               textAlign: TextAlign.end,
               keyboardType: keyboardType,

@@ -122,14 +122,14 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
 
   Widget _buildSegmentLabel(String text, bool isSelected) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 13,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           color: isSelected
-              ? CupertinoColors.white
+              ? AppColors.onAccent(context)
               : AppColors.label.resolveFrom(context),
         ),
       ),
@@ -157,28 +157,29 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: stageColor.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: stageColor.withValues(alpha: 0.35),
-                      width: 0.75,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: stageColor,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    isMaturation
-                        ? 'MATURATION (OIL)'
-                        : 'MACERATION (PERFUME)',
-                    style: TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                      color: stageColor,
+                    const SizedBox(width: 7),
+                    Text(
+                      isMaturation
+                          ? 'Maturation • Oil'
+                          : 'Maceration • Perfume',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: stageColor,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 Text(
                   batch.batchNumber,
@@ -230,24 +231,17 @@ class _AgingDashboardScreenState extends ConsumerState<AgingDashboardScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Container(
-                height: 7,
-                color: AppColors.separator.resolveFrom(context).withValues(alpha: 0.3),
+                width: double.infinity,
+                height: 6,
+                color: AppColors.cardBorder.resolveFrom(context),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
                   widthFactor: progress,
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: progress >= 1.0
-                            ? const [
-                                CupertinoColors.systemGreen,
-                                Color(0xFF68D391)
-                              ]
-                            : [
-                                AppColors.accent.resolveFrom(context),
-                                const Color(0xFFF6CE78),
-                              ],
-                      ),
+                      color: progress >= 1.0
+                          ? CupertinoColors.systemGreen
+                          : AppColors.accent.resolveFrom(context),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

@@ -257,18 +257,18 @@ class CompoundingSummarySheet extends StatelessWidget {
                     await LabHaptics.selection();
                     await _exportBatchWorksheet();
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(CupertinoIcons.square_arrow_up,
-                          size: 18, color: CupertinoColors.white),
-                      SizedBox(width: 8),
+                          size: 18, color: AppColors.onAccent(context)),
+                      const SizedBox(width: 8),
                       Text(
                         'Export Lab Batch Sheet (Print / Share)',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: CupertinoColors.white,
+                          color: AppColors.onAccent(context),
                         ),
                       ),
                     ],

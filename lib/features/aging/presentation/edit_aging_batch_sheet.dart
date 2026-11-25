@@ -261,7 +261,7 @@ class _EditAgingBatchSheetState extends ConsumerState<EditAgingBatchSheet> {
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           color: isSelected
-              ? CupertinoColors.white
+              ? AppColors.onAccent(context)
               : AppColors.label.resolveFrom(context),
         ),
       ),
@@ -274,10 +274,9 @@ class _EditAgingBatchSheetState extends ConsumerState<EditAgingBatchSheet> {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
+          color: AppColors.secondaryLabel.resolveFrom(context),
         ),
       ),
     );

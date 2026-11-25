@@ -104,11 +104,10 @@ class _SolventDensitySheetState extends State<SolventDensitySheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'SELECT SOLVENT',
+                        'Select solvent',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
                           color: AppColors.secondaryLabel.resolveFrom(context),
                         ),
                       ),
@@ -162,14 +161,40 @@ class _SolventDensitySheetState extends State<SolventDensitySheet> {
                         width: double.infinity,
                         child: CupertinoSlidingSegmentedControl<bool>(
                           groupValue: _isConvertingFromVolume,
-                          children: const {
+                          thumbColor: AppColors.accent.resolveFrom(context),
+                          backgroundColor: AppColors
+                              .tertiarySystemGroupedBackground
+                              .resolveFrom(context),
+                          children: {
                             true: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text('ml ➔ grams'),
+                              padding: const EdgeInsets.symmetric(vertical: 7),
+                              child: Text(
+                                'ml → grams',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: _isConvertingFromVolume
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: _isConvertingFromVolume
+                                      ? AppColors.onAccent(context)
+                                      : AppColors.label.resolveFrom(context),
+                                ),
+                              ),
                             ),
                             false: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 6),
-                              child: Text('grams ➔ ml'),
+                              padding: const EdgeInsets.symmetric(vertical: 7),
+                              child: Text(
+                                'grams → ml',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: !_isConvertingFromVolume
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: !_isConvertingFromVolume
+                                      ? AppColors.onAccent(context)
+                                      : AppColors.label.resolveFrom(context),
+                                ),
+                              ),
                             ),
                           },
                           onValueChanged: (val) {
@@ -219,11 +244,10 @@ class _SolventDensitySheetState extends State<SolventDensitySheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'CALCULATED VALUE (DENSITY: ${density.toStringAsFixed(3)} g/cm³)',
+                        'Calculated value (density ${density.toStringAsFixed(3)} g/cm³)',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
                           color: AppColors.secondaryLabel.resolveFrom(context),
                         ),
                       ),

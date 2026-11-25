@@ -87,7 +87,7 @@ class _AddEvaluationSheetState extends ConsumerState<AddEvaluationSheet> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'VISUAL CLARITY',
+              'Visual clarity',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -97,31 +97,27 @@ class _AddEvaluationSheetState extends ConsumerState<AddEvaluationSheet> {
             const SizedBox(height: 8),
             SizedBox(
               width: double.infinity,
-              child: CupertinoSegmentedControl<String>(
+              child: CupertinoSlidingSegmentedControl<String>(
                 groupValue: _clarity,
-                selectedColor: AppColors.accent.resolveFrom(context),
-                unselectedColor: CupertinoColors.transparent,
-                borderColor: AppColors.separator.resolveFrom(context),
-                children: const {
-                  'crystal_clear': Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Crystal Clear'),
-                  ),
-                  'slightly_hazy': Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Slight Haze'),
-                  ),
-                  'sediment': Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Sediment'),
-                  ),
+                thumbColor: AppColors.accent.resolveFrom(context),
+                backgroundColor: AppColors.secondarySystemGroupedBackground
+                    .resolveFrom(context),
+                children: {
+                  'crystal_clear': _buildClarityLabel(
+                      'Crystal Clear', _clarity == 'crystal_clear'),
+                  'slightly_hazy': _buildClarityLabel(
+                      'Slight Haze', _clarity == 'slightly_hazy'),
+                  'sediment':
+                      _buildClarityLabel('Sediment', _clarity == 'sediment'),
                 },
-                onValueChanged: (val) => setState(() => _clarity = val),
+                onValueChanged: (val) {
+                  if (val != null) setState(() => _clarity = val);
+                },
               ),
             ),
             const SizedBox(height: 20),
             Text(
-              'SOLUTION COLOR DESCRIPTOR',
+              'Solution color',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -131,12 +127,12 @@ class _AddEvaluationSheetState extends ConsumerState<AddEvaluationSheet> {
             const SizedBox(height: 8),
             CupertinoTextField(
               controller: _colorController,
-              placeholder: 'e.g. Pale Straw, Amber Darkening, Colorless',
+              placeholder: 'Pale straw, amber, colorless',
               padding: const EdgeInsets.all(12),
             ),
             const SizedBox(height: 24),
             Text(
-              'SENSORY MATURITY SCORES (1 - 5)',
+              'Sensory maturity scores (1–5)',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -194,7 +190,7 @@ class _AddEvaluationSheetState extends ConsumerState<AddEvaluationSheet> {
             ),
             const SizedBox(height: 20),
             Text(
-              'PERFUMER SENSORY LOG',
+              'Perfumer sensory log',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -206,10 +202,26 @@ class _AddEvaluationSheetState extends ConsumerState<AddEvaluationSheet> {
               controller: _notesController,
               maxLines: 4,
               placeholder:
-                  'Notes on top notes smoothing, drydown longevity, any off-notes...',
+                  'Top notes smoothing, drydown longevity, off-notes',
               padding: const EdgeInsets.all(12),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClarityLabel(String text, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 7),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          color: isSelected
+              ? AppColors.onAccent(context)
+              : AppColors.label.resolveFrom(context),
         ),
       ),
     );

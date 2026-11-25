@@ -263,7 +263,7 @@ class _BenchCompoundingScreenState
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    '${mat.pyramidNote.toUpperCase()} • ${item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution • Stock: ${mat.stockGrams.toStringAsFixed(1)}g',
+                                    '${mat.pyramidNote[0].toUpperCase()}${mat.pyramidNote.substring(1).toLowerCase()} note • ${item.specifiedDilutionPercent.toStringAsFixed(0)}% • Stock ${mat.stockGrams.toStringAsFixed(1)} g',
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: AppColors.secondaryLabel
@@ -317,12 +317,12 @@ class _BenchCompoundingScreenState
                   child: CupertinoButton.filled(
                     borderRadius: BorderRadius.circular(16),
                     onPressed: _finishCompounding,
-                    child: const Text(
+                    child: Text(
                       'Finish Compounding & Deduct Stock',
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: CupertinoColors.white,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.onAccent(context),
                       ),
                     ),
                   ),

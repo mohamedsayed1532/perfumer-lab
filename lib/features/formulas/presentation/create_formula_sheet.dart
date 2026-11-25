@@ -138,20 +138,20 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           children: [
-            _buildSectionHeader('ACCORD IDENTITY'),
+            _buildSectionHeader('Accord identity'),
             _buildCard([
               _buildTextField('Formula Name *', _nameController,
-                  placeholder: 'e.g. Santal Minimal, Citrus Amber'),
+                  placeholder: 'Santal Minimal'),
               _buildDivider(),
               _buildTextField('Version', _versionController,
-                  placeholder: 'e.g. 1.0, Mod 3'),
+                  placeholder: '1.0'),
               _buildDivider(),
               _buildTextField('Description / Notes', _descriptionController,
-                  placeholder: 'e.g. Warm woody profile with creamy sandalwood',
+                  placeholder: 'Warm woody sandalwood',
                   maxLines: 2),
             ]),
             const SizedBox(height: 24),
-            _buildSectionHeader('CONCENTRATION TARGET'),
+            _buildSectionHeader('Concentration target'),
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: SizedBox(
@@ -219,7 +219,7 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           color: isSelected
-              ? CupertinoColors.white
+              ? AppColors.onAccent(context)
               : AppColors.label.resolveFrom(context),
         ),
       ),
@@ -232,10 +232,9 @@ class _CreateFormulaSheetState extends ConsumerState<CreateFormulaSheet> {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
-          color: AppColors.accent.resolveFrom(context).withValues(alpha: 0.85),
+          color: AppColors.secondaryLabel.resolveFrom(context),
         ),
       ),
     );

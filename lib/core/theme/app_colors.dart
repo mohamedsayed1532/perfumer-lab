@@ -80,4 +80,11 @@ class AppColors {
     color: Color(0x1A000000), // Subtle hairline card border (light)
     darkColor: Color(0x24FFFFFF), // Translucent specular hairline (dark)
   );
+
+  /// High-contrast foreground color for text/icons rendered on [accent] surfaces.
+  static Color onAccent(BuildContext context) {
+    return CupertinoTheme.brightnessOf(context) == Brightness.dark
+        ? const Color(0xFF14161E)
+        : CupertinoColors.white;
+  }
 }

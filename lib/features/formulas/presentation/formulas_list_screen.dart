@@ -58,17 +58,18 @@ class FormulasListScreen extends ConsumerWidget {
                                 horizontal: 24, vertical: 12),
                             borderRadius: BorderRadius.circular(14),
                             onPressed: () => _openCreateFormula(context),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(CupertinoIcons.add,
-                                    size: 18, color: CupertinoColors.white),
-                                SizedBox(width: 8),
+                                    size: 18,
+                                    color: AppColors.onAccent(context)),
+                                const SizedBox(width: 8),
                                 Text(
                                   'Create Formula',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: CupertinoColors.white,
+                                    color: AppColors.onAccent(context),
                                   ),
                                 ),
                               ],
@@ -114,11 +115,10 @@ class FormulasListScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 7),
                                   Text(
-                                    '${formulas.length} ${formulas.length == 1 ? 'Active Formulation' : 'Active Formulations'} • IFRA Compliant',
+                                    '${formulas.length} ${formulas.length == 1 ? 'Active formulation' : 'Active formulations'}',
                                     style: TextStyle(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.2,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
                                       color: AppColors.secondaryLabel
                                           .resolveFrom(context),
                                     ),
@@ -155,25 +155,25 @@ class FormulasListScreen extends ConsumerWidget {
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 46,
-                                        height: 46,
+                                        width: 36,
+                                        height: 36,
                                         decoration: BoxDecoration(
                                           color: AppColors.accent
                                               .resolveFrom(context)
-                                              .withValues(alpha: 0.16),
+                                              .withValues(alpha: 0.12),
                                           borderRadius:
-                                              BorderRadius.circular(14),
+                                              BorderRadius.circular(10),
                                           border: Border.all(
                                             color: AppColors.accent
                                                 .resolveFrom(context)
-                                                .withValues(alpha: 0.35),
+                                                .withValues(alpha: 0.28),
                                             width: 0.75,
                                           ),
                                         ),
                                         child: Center(
                                           child: Icon(
                                             CupertinoIcons.lab_flask_solid,
-                                            size: 22,
+                                            size: 18,
                                             color: AppColors.accent
                                                 .resolveFrom(context),
                                           ),
@@ -218,7 +218,9 @@ class FormulasListScreen extends ConsumerWidget {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    '${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
+                                                    formula.targetConcentrationPercent >= 99.5
+                                                        ? 'Pure Concentrate'
+                                                        : '${formula.targetConcentrationPercent.toStringAsFixed(0)}% EdP',
                                                     style: TextStyle(
                                                       fontSize: 11,
                                                       fontWeight:

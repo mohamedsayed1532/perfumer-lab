@@ -69,7 +69,7 @@ class PyramidNoteSelector extends StatelessWidget {
             icon,
             size: 14,
             color: isSelected
-                ? CupertinoColors.white
+                ? AppColors.onAccent(context)
                 : AppColors.secondaryLabel.resolveFrom(context),
           ),
           const SizedBox(width: 6),
@@ -79,7 +79,7 @@ class PyramidNoteSelector extends StatelessWidget {
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               color: isSelected
-                  ? CupertinoColors.white
+                  ? AppColors.onAccent(context)
                   : AppColors.label.resolveFrom(context),
             ),
           ),

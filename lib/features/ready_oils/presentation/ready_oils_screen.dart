@@ -63,17 +63,17 @@ class ReadyOilsScreen extends ConsumerWidget {
                               horizontal: 20, vertical: 10),
                           borderRadius: BorderRadius.circular(12),
                           onPressed: () => _openSheet(context),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(CupertinoIcons.add,
-                                  size: 18, color: CupertinoColors.white),
-                              SizedBox(width: 6),
+                                  size: 18, color: AppColors.onAccent(context)),
+                              const SizedBox(width: 6),
                               Text(
                                 'Add Fragrance Oil',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color: CupertinoColors.white,
+                                  color: AppColors.onAccent(context),
                                 ),
                               ),
                             ],
@@ -181,21 +181,21 @@ class ReadyOilsScreen extends ConsumerWidget {
                                                   selectedOil: oil),
                                         );
                                       },
-                                      child: const Row(
+                                      child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Icon(
                                             CupertinoIcons.flame_fill,
                                             size: 14,
-                                            color: CupertinoColors.white,
+                                            color: AppColors.onAccent(context),
                                           ),
-                                          SizedBox(width: 6),
+                                          const SizedBox(width: 6),
                                           Text(
                                             'Dilute & Bottle (EdP)',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
-                                              color: CupertinoColors.white,
+                                              color: AppColors.onAccent(context),
                                             ),
                                           ),
                                         ],

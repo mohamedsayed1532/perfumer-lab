@@ -31,16 +31,16 @@ class OlfactoryPyramidBar extends StatelessWidget {
     final heartPct = total > 0 ? (heartPpt / total * 100) : 0.0;
     final basePct = total > 0 ? (basePpt / total * 100) : 0.0;
 
-    const topColor = Color(0xFFD49E35); // Amber Gold
-    const heartColor = Color(0xFFFF2D55); // Crimson Rose
-    const baseColor = Color(0xFFAF52DE); // Royal Violet
+    const topColor = Color(0xFFE5A93C); // Amber — Top
+    const heartColor = Color(0xFFD47355); // Rose damask — Heart
+    const baseColor = Color(0xFFA67C52); // Smoked bronze — Base
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0x1AFFFFFF),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x2AFFFFFF), width: 1.0),
+        color: const Color(0x14FFFFFF),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorder.resolveFrom(context), width: 0.75),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,11 +49,10 @@ class OlfactoryPyramidBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'OLFACTORY BALANCE',
+                'Olfactory balance',
                 style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.secondaryLabel.resolveFrom(context),
                 ),
               ),
