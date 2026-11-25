@@ -18,7 +18,7 @@ class PerfumeryLabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoApp(
-      title: 'Perfumery Lab',
+      title: 'Perfumer Lab',
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         DefaultCupertinoLocalizations.delegate,
