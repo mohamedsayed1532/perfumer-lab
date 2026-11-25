@@ -75,6 +75,7 @@ flutter:
   assets:
     - assets/data/ifra_51_standards.json
     - assets/data/ifra_51_ncs_annex.json
+    - assets/data/materials_catalog.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

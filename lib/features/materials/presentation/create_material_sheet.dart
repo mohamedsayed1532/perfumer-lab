@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:perfumery_lab/core/database/app_database.dart';
 import 'package:perfumery_lab/core/services/ifra_catalog_service.dart';
+import 'package:perfumery_lab/core/services/materials_catalog_service.dart';
 import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/app_typography.dart';
 import 'package:perfumery_lab/core/utils/haptics.dart';
@@ -22,6 +23,14 @@ class CreateMaterialSheet extends ConsumerStatefulWidget {
 
 class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
   bool _isDirty = false;
+  bool _userEditedIdealMax = false;
+  bool _userEditedSafety = false;
+  bool _userEditedIdentity = false;
+  bool _suppressFieldCallbacks = false;
+  String? _lastAutoAppliedCas;
+  String? _autoFilledName;
+  String? _autoFilledBotanical;
+  String? _autoFilledIupac;
 
   late TextEditingController _nameController;
   late TextEditingController _casController;
@@ -91,11 +100,148 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
         _categories = List<String>.from(jsonDecode(mat.categoriesJson));
         _ghsPictograms = List<String>.from(jsonDecode(mat.hazardPictogramsJson));
       } catch (_) {}
+      _userEditedIdentity = true;
+      _userEditedIdealMax = mat.idealMaxPercent != null;
+      _userEditedSafety = _ghsPictograms.isNotEmpty;
     }
+
+    _casController.addListener(_onCasChanged);
+    _nameController.addListener(_onNameChanged);
+    _idealMaxController.addListener(_onIdealMaxChanged);
+  }
+
+  void _onCasChanged() {
+    if (_suppressFieldCallbacks) return;
+    final clean = MaterialsCatalogData.cleanCas(_casController.text);
+    final matCatalog = ref.read(materialsCatalogProvider).value;
+    final ifraCatalog = ref.read(ifraCatalogProvider).value;
+    final catMatch = matCatalog?.findByCas(clean);
+    final ifraMatch = clean.isEmpty
+        ? null
+        : ifraCatalog?.findStandardForMaterial(casNumber: clean);
+
+    if (widget.existing == null &&
+        clean.isNotEmpty &&
+        clean != _lastAutoAppliedCas &&
+        (catMatch != null || ifraMatch != null)) {
+      _applyDatabaseMatch(catMatch, ifraMatch, forceOverwrite: false);
+    } else if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onNameChanged() {
+    if (_suppressFieldCallbacks) return;
+    if (_nameController.text != _autoFilledName) {
+      _userEditedIdentity = _nameController.text.trim().isNotEmpty;
+    }
+    if (mounted) setState(() {});
+  }
+
+  void _onIdealMaxChanged() {
+    if (_suppressFieldCallbacks) return;
+    _userEditedIdealMax = _idealMaxController.text.trim().isNotEmpty;
+  }
+
+  List<String> _hazardsFromIfra(IfraStandard std) {
+    final ep = std.endpoint.toUpperCase();
+    final out = <String>{};
+    if (ep.contains('DERMAL SENSITIZATION') ||
+        ep.contains('SKIN') ||
+        ep.contains('DEPIGMENTATION') ||
+        ep.contains('PHOTOTOXICITY') ||
+        ep.contains('PHOTOSENSITIZATION')) {
+      out.add('irritant');
+    }
+    if (ep.contains('CARCINOGEN') ||
+        ep.contains('GENOTOXIC') ||
+        ep.contains('MUTAGEN') ||
+        ep.contains('REPRODUCTIVE') ||
+        ep.contains('TERATOGEN') ||
+        ep.contains('SYSTEMIC') ||
+        ep.contains('NEUROTOXIC') ||
+        ep.contains('NITROSAMINE')) {
+      out.add('health_hazard');
+    }
+    if (ep.contains('ACUTE TOXICITY') || ep.contains('CYANIDE')) {
+      out.add('acute_toxic');
+    }
+    if (ep.contains('VPVB')) {
+      out.add('environmental');
+    }
+    return kValidHazardIds.where(out.contains).toList();
+  }
+
+  void _applyDatabaseMatch(
+    CatalogMaterialEntry? cat,
+    IfraStandard? ifra, {
+    required bool forceOverwrite,
+  }) {
+    if (cat == null && ifra == null) return;
+    _suppressFieldCallbacks = true;
+    try {
+      final resolvedCas =
+          cat?.cas ?? MaterialsCatalogData.cleanCas(_casController.text);
+      _lastAutoAppliedCas = resolvedCas;
+
+      final double? suggestedMax =
+          ifra?.numericLimitFor('Cat 4') ?? cat?.idealMaxPercent;
+      if (forceOverwrite || !_userEditedIdealMax) {
+        _idealMaxController.text =
+            suggestedMax != null ? suggestedMax.toString() : '';
+      }
+
+      final List<String> suggestedHazards =
+          cat != null ? cat.hazards : _hazardsFromIfra(ifra!);
+      if (forceOverwrite || !_userEditedSafety) {
+        _ghsPictograms = List<String>.from(suggestedHazards);
+      }
+
+      if (cat != null) {
+        final canUpdateName = forceOverwrite ||
+            (!_userEditedIdentity &&
+                (_nameController.text.trim().isEmpty ||
+                    _nameController.text == _autoFilledName));
+        if (canUpdateName && cat.name.isNotEmpty) {
+          _nameController.text = cat.name;
+          _autoFilledName = cat.name;
+        }
+        final canUpdateBot = forceOverwrite ||
+            _botanicalController.text.trim().isEmpty ||
+            _botanicalController.text == _autoFilledBotanical;
+        if (canUpdateBot && (cat.botanicalName ?? '').isNotEmpty) {
+          _botanicalController.text = cat.botanicalName!;
+          _autoFilledBotanical = cat.botanicalName;
+        }
+        final canUpdateIupac = forceOverwrite ||
+            _iupacController.text.trim().isEmpty ||
+            _iupacController.text == _autoFilledIupac;
+        if (canUpdateIupac && (cat.iupacName ?? '').isNotEmpty) {
+          _iupacController.text = cat.iupacName!;
+          _autoFilledIupac = cat.iupacName;
+        }
+        if (forceOverwrite || !_userEditedIdentity) {
+          if (cat.pyramidNote != null &&
+              const ['top', 'heart', 'base'].contains(cat.pyramidNote)) {
+            _pyramidNote = cat.pyramidNote!;
+          }
+          if (cat.categories.isNotEmpty) {
+            _categories = List<String>.from(cat.categories);
+          }
+        }
+      }
+      _isDirty = true;
+    } finally {
+      _suppressFieldCallbacks = false;
+    }
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    _casController.removeListener(_onCasChanged);
+    _nameController.removeListener(_onNameChanged);
+    _idealMaxController.removeListener(_onIdealMaxChanged);
     _nameController.dispose();
     _casController.dispose();
     _botanicalController.dispose();
@@ -206,6 +352,19 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<MaterialsCatalogData>>(
+      materialsCatalogProvider,
+      (_, next) {
+        if (next.hasValue) _onCasChanged();
+      },
+    );
+    ref.listen<AsyncValue<IfraCatalogData>>(
+      ifraCatalogProvider,
+      (_, next) {
+        if (next.hasValue) _onCasChanged();
+      },
+    );
+
     return PopScope(
       canPop: !_isDirty,
       onPopInvokedWithResult: (didPop, result) async {
@@ -249,6 +408,8 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                 _buildDivider(),
                 _buildTextField('CAS Number', _casController,
                     placeholder: 'e.g. 54464-57-2'),
+                _buildDivider(),
+                _buildCasLookupRow(),
                 _buildDivider(),
                 _buildTextField('Botanical Name', _botanicalController,
                     placeholder: 'e.g. Citrus bergamia'),
@@ -314,6 +475,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                 selected: _ghsPictograms,
                 onChanged: (list) {
                   _markDirty();
+                  _userEditedSafety = true;
                   setState(() => _ghsPictograms = list);
                 },
               ),
@@ -563,12 +725,133 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
     );
   }
 
+  static String _formatHazardLabel(String id) => switch (id) {
+        'flammable' => 'Flammable',
+        'irritant' => 'Irritant',
+        'health_hazard' => 'Health Hazard',
+        'environmental' => 'Environmental',
+        'corrosive' => 'Corrosive',
+        'acute_toxic' => 'Acute Toxic',
+        _ => id,
+      };
+
+  Widget _buildCasLookupRow() {
+    final matCatalog = ref.watch(materialsCatalogProvider).value;
+    final ifraCatalog = ref.watch(ifraCatalogProvider).value;
+    final cleanCas = MaterialsCatalogData.cleanCas(_casController.text);
+    final catMatch = cleanCas.isEmpty ? null : matCatalog?.findByCas(cleanCas);
+    final ifraMatch = cleanCas.isEmpty
+        ? null
+        : ifraCatalog?.findStandardForMaterial(casNumber: cleanCas);
+
+    final hasMatch = catMatch != null || ifraMatch != null;
+    final hazards =
+        catMatch?.hazards ?? (ifraMatch != null ? _hazardsFromIfra(ifraMatch) : const <String>[]);
+    final double? maxLimit =
+        ifraMatch?.numericLimitFor('Cat 4') ?? catMatch?.idealMaxPercent;
+    final maxText = ifraMatch != null
+        ? 'IFRA Cat 4: ${ifraMatch.displayLimitFor('Cat 4')}'
+        : (maxLimit != null ? 'Guide Max: $maxLimit%' : 'No IFRA limit');
+    final safetyText = hazards.isEmpty
+        ? 'No GHS hazards'
+        : hazards.map(_formatHazardLabel).join(', ');
+    final countText = matCatalog != null ? '${matCatalog.entries.length} CAS' : 'DB';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          Icon(
+            hasMatch
+                ? CupertinoIcons.checkmark_seal_fill
+                : CupertinoIcons.search,
+            size: 16,
+            color: hasMatch
+                ? (ifraMatch?.isProhibited == true
+                    ? CupertinoColors.systemRed
+                    : AppColors.naturalGreen.resolveFrom(context))
+                : AppColors.tertiaryLabel.resolveFrom(context),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  hasMatch
+                      ? 'DB Match · ${catMatch?.name ?? ifraMatch!.name}'
+                      : 'Hidden CAS Reference ($countText)',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: hasMatch
+                        ? AppColors.label.resolveFrom(context)
+                        : AppColors.secondaryLabel.resolveFrom(context),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  hasMatch
+                      ? '$maxText · $safetyText'
+                      : (cleanCas.isEmpty
+                          ? 'Type CAS number to auto-fill Ideal Max & Safety'
+                          : 'No entry found for $cleanCas'),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: hasMatch
+                        ? AppColors.secondaryLabel.resolveFrom(context)
+                        : AppColors.tertiaryLabel.resolveFrom(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (hasMatch) ...[
+            const SizedBox(width: 8),
+            CupertinoButton(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              minimumSize: Size.zero,
+              color: AppColors.accent.resolveFrom(context),
+              borderRadius: BorderRadius.circular(8),
+              onPressed: () => _applyDatabaseMatch(
+                catMatch,
+                ifraMatch,
+                forceOverwrite: true,
+              ),
+              child: Text(
+                'Apply',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.onAccent(context),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildIfraLookupRow() {
     final catalog = ref.watch(ifraCatalogProvider).value;
+    final matCatalog = ref.watch(materialsCatalogProvider).value;
     final match = catalog?.findStandardForMaterial(
       casNumber: _casController.text,
       name: _nameController.text,
     );
+    final catMatch = matCatalog?.findByCas(_casController.text);
+    final double? limit =
+        match?.numericLimitFor('Cat 4') ?? catMatch?.idealMaxPercent;
+    final labelText = match != null
+        ? '${match.name} · Cat 4: ${match.displayLimitFor('Cat 4')}'
+        : (catMatch != null
+            ? '${catMatch.name} · ${limit != null ? 'TGSC Guide: $limit%' : 'No IFRA restriction'}'
+            : 'Type name or CAS to auto-match IFRA & Materials DB');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -580,7 +863,7 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'IFRA 51st Database Match',
+                  'IFRA 51st & Guide Max Match',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -589,16 +872,14 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  match == null
-                      ? 'Type name or CAS to auto-match 263 standards'
-                      : '${match.name} · Cat 4: ${match.displayLimitFor('Cat 4')}',
+                  labelText,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
-                    color: match == null
+                    color: (match == null && catMatch == null)
                         ? AppColors.tertiaryLabel.resolveFrom(context)
-                        : (match.type == 'PROHIBITION'
+                        : (match?.type == 'PROHIBITION'
                             ? CupertinoColors.systemRed
                             : AppColors.naturalGreen.resolveFrom(context)),
                   ),
@@ -606,20 +887,19 @@ class _CreateMaterialSheetState extends ConsumerState<CreateMaterialSheet> {
               ],
             ),
           ),
-          if (match != null && match.numericLimitFor('Cat 4') != null)
+          if (limit != null)
             CupertinoButton(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               minimumSize: Size.zero,
               color: AppColors.accent.resolveFrom(context),
               borderRadius: BorderRadius.circular(8),
               onPressed: () {
-                final limit = match.numericLimitFor('Cat 4');
-                if (limit != null) {
-                  _markDirty();
-                  setState(() {
-                    _idealMaxController.text = limit.toString();
-                  });
-                }
+                _markDirty();
+                setState(() {
+                  _suppressFieldCallbacks = true;
+                  _idealMaxController.text = limit.toString();
+                  _suppressFieldCallbacks = false;
+                });
               },
               child: Text(
                 'Apply',
