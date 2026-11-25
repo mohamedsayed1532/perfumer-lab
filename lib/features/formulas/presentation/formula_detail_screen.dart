@@ -12,14 +12,22 @@ import 'add_or_edit_ingredient_sheet.dart';
 import 'widgets/ifra_safety_banner.dart';
 import 'widgets/olfactory_pyramid_bar.dart';
 
-class FormulaDetailScreen extends ConsumerWidget {
+class FormulaDetailScreen extends ConsumerStatefulWidget {
   final String formulaId;
   const FormulaDetailScreen({super.key, required this.formulaId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FormulaDetailScreen> createState() =>
+      _FormulaDetailScreenState();
+}
+
+class _FormulaDetailScreenState extends ConsumerState<FormulaDetailScreen> {
+  String _viewMode = 'ppt'; // 'ppt' | 'grams' | 'active'
+
+  @override
+  Widget build(BuildContext context) {
     final repo = ref.watch(formulasRepositoryProvider);
-    final formulaStream = repo.watchFormulaWithItems(formulaId);
+    final formulaStream = repo.watchFormulaWithItems(widget.formulaId);
 
     return StreamBuilder<FormulaWithMaterials?>(
       stream: formulaStream,
@@ -218,9 +226,32 @@ class FormulaDetailScreen extends ConsumerWidget {
                     child: OlfactoryPyramidBar(formulaData: data),
                   ),
 
-                  const SizedBox(height: 4),
+                  if (items.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: CupertinoSlidingSegmentedControl<String>(
+                          groupValue: _viewMode,
+                          thumbColor: AppColors.accent.resolveFrom(context),
+                          backgroundColor: AppColors
+                              .secondarySystemGroupedBackground
+                              .resolveFrom(context),
+                          children: {
+                            'ppt': _buildModeTab('Parts / 1000', _viewMode == 'ppt'),
+                            'grams': _buildModeTab('Weight (100g)', _viewMode == 'grams'),
+                            'active': _buildModeTab('Pure Active', _viewMode == 'active'),
+                          },
+                          onValueChanged: (v) {
+                            if (v != null) setState(() => _viewMode = v);
+                          },
+                        ),
+                      ),
+                    ),
 
-                  // Ingredients List
+                  const SizedBox(height: 2),
+
+                  // Ingredients List grouped by Top / Heart / Base
                   Expanded(
                     child: items.isEmpty
                         ? Center(
@@ -268,192 +299,12 @@ class FormulaDetailScreen extends ConsumerWidget {
                               ],
                             ),
                           )
-                        : ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
-                            itemCount: items.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, index) {
-                              final row = items[index];
-                              final mat = row.material;
-                              final item = row.item;
-                              final percent = item.partsPerThousand / 10.0;
-
-                              IconData noteIcon;
-                              Color noteColor;
-                              String noteTitle;
-                              switch (mat.pyramidNote.toLowerCase()) {
-                                case 'top':
-                                  noteIcon = CupertinoIcons.sparkles;
-                                  noteColor = const Color(0xFFE5A93C);
-                                  noteTitle = 'Top note';
-                                  break;
-                                case 'heart':
-                                case 'middle':
-                                  noteIcon = CupertinoIcons.heart_fill;
-                                  noteColor = const Color(0xFFD47355);
-                                  noteTitle = 'Heart note';
-                                  break;
-                                case 'base':
-                                default:
-                                  noteIcon = CupertinoIcons.shield_fill;
-                                  noteColor = const Color(0xFFA67C52);
-                                  noteTitle = 'Base note';
-                                  break;
-                              }
-
-                              final hasIfraLimit = mat.idealMaxPercent != null &&
-                                  mat.idealMaxPercent! > 0;
-                              final skinExposure = hasIfraLimit
-                                  ? ifraService.calculateSkinExposure(
-                                      partsPerThousand: item.partsPerThousand,
-                                      totalPpt: totalPpt > 0 ? totalPpt : 1000.0,
-                                      specifiedDilutionPercent:
-                                          item.specifiedDilutionPercent,
-                                      targetConcentrationPercent:
-                                          formula.targetConcentrationPercent,
-                                    )
-                                  : 0.0;
-                              final isOverIfra = hasIfraLimit &&
-                                  (skinExposure > (mat.idealMaxPercent! + 0.00001));
-
-                              return GestureDetector(
-                                onTap: () => _openEditIngredientSheet(
-                                  context,
-                                  formula.id,
-                                  row,
-                                ),
-                                child: LiquidGlass(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 13),
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          color:
-                                              noteColor.withValues(alpha: 0.12),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                            color: noteColor.withValues(
-                                                alpha: 0.28),
-                                            width: 0.75,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Icon(noteIcon,
-                                              size: 16, color: noteColor),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              mat.name,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: AppTypography.atelierCardTitle(
-                                                  context,
-                                                  fontSize: 16),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              '$noteTitle • ${item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 12.5,
-                                                color: AppColors.secondaryLabel
-                                                    .resolveFrom(context),
-                                              ),
-                                            ),
-                                            if (hasIfraLimit) ...[
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    isOverIfra
-                                                        ? CupertinoIcons
-                                                            .exclamationmark_triangle_fill
-                                                        : CupertinoIcons
-                                                            .checkmark_shield_fill,
-                                                    size: 11,
-                                                    color: isOverIfra
-                                                        ? CupertinoColors
-                                                            .systemRed
-                                                        : CupertinoColors
-                                                            .systemGreen,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Flexible(
-                                                    child: Text(
-                                                      isOverIfra
-                                                          ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%'
-                                                          : 'IFRA Safe: ${skinExposure.toStringAsFixed(2)}% (Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%)',
-                                                      maxLines: 1,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        fontSize: 11,
-                                                        fontWeight: isOverIfra
-                                                            ? FontWeight.w700
-                                                            : FontWeight.w500,
-                                                        color: isOverIfra
-                                                            ? CupertinoColors
-                                                                .systemRed
-                                                            : CupertinoColors
-                                                                .systemGreen,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      ConstrainedBox(
-                                        constraints: const BoxConstraints(minWidth: 54),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              '${item.partsPerThousand.toStringAsFixed(1)} ppt',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            style:
-                                                AppTypography.precisionNumber(
-                                              context,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            '${percent.toStringAsFixed(2)}%',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.accent
-                                                  .resolveFrom(context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                        : _buildGroupedIngredientsList(
+                            context,
+                            formula: formula,
+                            items: items,
+                            totalPpt: totalPpt,
+                            ifraService: ifraService,
                           ),
                   ),
                 ],
@@ -462,6 +313,297 @@ class FormulaDetailScreen extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildModeTab(String label, bool isSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+          color: isSelected
+              ? AppColors.onAccent(context)
+              : AppColors.label.resolveFrom(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGroupedIngredientsList(
+    BuildContext context, {
+    required Formula formula,
+    required List<FormulaItemWithMaterial> items,
+    required double totalPpt,
+    required IfraSafetyService ifraService,
+  }) {
+    final topItems = <FormulaItemWithMaterial>[];
+    final heartItems = <FormulaItemWithMaterial>[];
+    final baseItems = <FormulaItemWithMaterial>[];
+
+    for (final row in items) {
+      final note = row.material.pyramidNote.toLowerCase().trim();
+      if (note == 'top') {
+        topItems.add(row);
+      } else if (note == 'heart' || note == 'middle') {
+        heartItems.add(row);
+      } else {
+        baseItems.add(row);
+      }
+    }
+
+    final sections = [
+      (
+        title: 'Top notes',
+        color: const Color(0xFFE5A93C),
+        icon: CupertinoIcons.sparkles,
+        rows: topItems,
+      ),
+      (
+        title: 'Heart notes',
+        color: const Color(0xFFD47355),
+        icon: CupertinoIcons.heart_fill,
+        rows: heartItems,
+      ),
+      (
+        title: 'Base notes',
+        color: const Color(0xFFA67C52),
+        icon: CupertinoIcons.shield_fill,
+        rows: baseItems,
+      ),
+    ].where((s) => s.rows.isNotEmpty).toList();
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      children: [
+        for (final section in sections) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 10, 4, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: section.color,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      section.title,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.label.resolveFrom(context),
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  _formatSectionTotal(section.rows, totalPpt),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                    color: AppColors.secondaryLabel.resolveFrom(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (final row in section.rows)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildIngredientCard(
+                context,
+                formula: formula,
+                row: row,
+                totalPpt: totalPpt,
+                ifraService: ifraService,
+                noteIcon: section.icon,
+                noteColor: section.color,
+              ),
+            ),
+        ],
+      ],
+    );
+  }
+
+  String _formatSectionTotal(
+      List<FormulaItemWithMaterial> rows, double totalPpt) {
+    final sumPpt =
+        rows.fold<double>(0.0, (sum, r) => sum + r.item.partsPerThousand);
+    final pct = totalPpt > 0 ? (sumPpt / totalPpt) * 100.0 : 0.0;
+    return '${sumPpt.toStringAsFixed(1)} ppt • ${pct.toStringAsFixed(0)}%';
+  }
+
+  Widget _buildIngredientCard(
+    BuildContext context, {
+    required Formula formula,
+    required FormulaItemWithMaterial row,
+    required double totalPpt,
+    required IfraSafetyService ifraService,
+    required IconData noteIcon,
+    required Color noteColor,
+  }) {
+    final mat = row.material;
+    final item = row.item;
+    final percent = totalPpt > 0
+        ? (item.partsPerThousand / totalPpt) * 100.0
+        : item.partsPerThousand / 10.0;
+
+    final hasIfraLimit =
+        mat.idealMaxPercent != null && mat.idealMaxPercent! > 0;
+    final skinExposure = hasIfraLimit
+        ? ifraService.calculateSkinExposure(
+            partsPerThousand: item.partsPerThousand,
+            totalPpt: totalPpt > 0 ? totalPpt : 1000.0,
+            specifiedDilutionPercent: item.specifiedDilutionPercent,
+            targetConcentrationPercent: formula.targetConcentrationPercent,
+          )
+        : 0.0;
+    final isOverIfra =
+        hasIfraLimit && (skinExposure > (mat.idealMaxPercent! + 0.00001));
+
+    String primaryMetric;
+    String secondaryMetric;
+    switch (_viewMode) {
+      case 'grams':
+        final gramsIn100 =
+            totalPpt > 0 ? (item.partsPerThousand / totalPpt) * 100.0 : 0.0;
+        primaryMetric = '${gramsIn100.toStringAsFixed(2)} g';
+        secondaryMetric = '${item.partsPerThousand.toStringAsFixed(1)} ppt';
+        break;
+      case 'active':
+        final pureActive = percent * (item.specifiedDilutionPercent / 100.0);
+        primaryMetric = '${pureActive.toStringAsFixed(2)}%';
+        secondaryMetric =
+            '${item.specifiedDilutionPercent.toStringAsFixed(0)}% dil.';
+        break;
+      case 'ppt':
+      default:
+        primaryMetric = '${item.partsPerThousand.toStringAsFixed(1)} ppt';
+        secondaryMetric = '${percent.toStringAsFixed(2)}%';
+        break;
+    }
+
+    return GestureDetector(
+      onTap: () => _openEditIngredientSheet(context, formula.id, row),
+      child: LiquidGlass(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        borderRadius: BorderRadius.circular(16),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: noteColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: noteColor.withValues(alpha: 0.28),
+                  width: 0.75,
+                ),
+              ),
+              child: Center(
+                child: Icon(noteIcon, size: 16, color: noteColor),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    mat.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.atelierCardTitle(context, fontSize: 16),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '${item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution${mat.casNumber != null && mat.casNumber!.isNotEmpty ? ' • ${mat.casNumber}' : ''}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: AppColors.secondaryLabel.resolveFrom(context),
+                    ),
+                  ),
+                  if (hasIfraLimit) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          isOverIfra
+                              ? CupertinoIcons.exclamationmark_triangle_fill
+                              : CupertinoIcons.checkmark_shield_fill,
+                          size: 11,
+                          color: isOverIfra
+                              ? CupertinoColors.systemRed
+                              : CupertinoColors.systemGreen,
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: Text(
+                            isOverIfra
+                                ? 'IFRA Violation: ${skinExposure.toStringAsFixed(2)}% > Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%'
+                                : 'IFRA Safe: ${skinExposure.toStringAsFixed(2)}% (Max ${mat.idealMaxPercent!.toStringAsFixed(2)}%)',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: isOverIfra
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isOverIfra
+                                  ? CupertinoColors.systemRed
+                                  : CupertinoColors.systemGreen,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 54),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    primaryMetric,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTypography.precisionNumber(context, fontSize: 16),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    secondaryMetric,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: AppColors.accent.resolveFrom(context),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

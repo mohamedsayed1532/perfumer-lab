@@ -5,6 +5,7 @@ import 'package:perfumery_lab/core/theme/app_colors.dart';
 import 'package:perfumery_lab/core/theme/liquid_glass.dart';
 import 'package:perfumery_lab/core/utils/haptics.dart';
 import 'alcohol_gauging_sheet.dart';
+import 'ifra_reference_sheet.dart';
 import 'solvent_density_sheet.dart';
 
 class LabUtilitiesScreen extends ConsumerWidget {
@@ -78,10 +79,9 @@ class LabUtilitiesScreen extends ConsumerWidget {
                       title: 'IFRA 51st Amendment Limits',
                       subtitle: 'Category 4 fine fragrance threshold reference',
                       onTap: () {
-                        _showInfoDialog(
-                          context,
-                          'IFRA 51st Amendment',
-                          'Standard safety threshold reference:\n\n• Oakmoss Absolute: 0.1%\n• Isoeugenol: 0.02%\n• Hydroxycitronellal: 1.0%\n• Benzyl Salicylate: Safe under category 4 fine fragrance guideline limits.',
+                        showCupertinoModalPopup(
+                          context: context,
+                          builder: (_) => const IfraReferenceSheet(),
                         );
                       },
                     ),

@@ -126,10 +126,10 @@ class _BenchCompoundingScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'SCALE DISPENSE PROGRESS',
+                                'Scale dispense progress',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.secondaryLabel
                                       .resolveFrom(context),
                                 ),
@@ -146,10 +146,10 @@ class _BenchCompoundingScreenState
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'BATCH GOAL',
+                                'Batch goal',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.secondaryLabel
                                       .resolveFrom(context),
                                 ),
@@ -187,6 +187,124 @@ class _BenchCompoundingScreenState
                   ),
                 ),
               ),
+
+              // Active Dispensing Focus Card
+              if (items.isNotEmpty)
+                Builder(
+                  builder: (context) {
+                    final nextRow = items
+                        .where((r) => !_completedItems.contains(r.item.id))
+                        .firstOrNull;
+                    if (nextRow == null) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: LiquidGlass(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          borderRadius: BorderRadius.circular(14),
+                          child: const Row(
+                            children: [
+                              Icon(CupertinoIcons.checkmark_seal_fill,
+                                  color: CupertinoColors.systemGreen, size: 18),
+                              SizedBox(width: 10),
+                              Text(
+                                'All ingredients weighed and ready to log',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: CupertinoColors.systemGreen,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    final nextTarget = (nextRow.item.partsPerThousand / totalPpt) *
+                        _targetBatchGrams;
+                    final nextAdded = _addedWeights[nextRow.item.id] ?? 0.0;
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: LiquidGlass(
+                        padding: const EdgeInsets.all(14),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width: 7,
+                                        height: 7,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.accent
+                                              .resolveFrom(context),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Next to weigh',
+                                        style: TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.accent
+                                              .resolveFrom(context),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    nextRow.material.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTypography.atelierCardTitle(
+                                        context,
+                                        fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Target ${nextTarget.toStringAsFixed(3)} g • ${nextRow.item.specifiedDilutionPercent.toStringAsFixed(0)}% dilution',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.secondaryLabel
+                                          .resolveFrom(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            CupertinoButton(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 8),
+                              color: AppColors.accent.resolveFrom(context),
+                              borderRadius: BorderRadius.circular(10),
+                              onPressed: () => _showRecordWeightDialog(
+                                nextRow.item.id,
+                                nextRow.material.name,
+                                nextTarget,
+                                nextAdded,
+                              ),
+                              child: Text(
+                                'Weigh',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.onAccent(context),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
               // Materials List with Target Weight
               Expanded(
